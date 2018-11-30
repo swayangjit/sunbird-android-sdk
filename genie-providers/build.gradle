@@ -3,7 +3,11 @@ apply plugin: 'com.android.library'
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url "https://platform.ekstep.in/downloads/content/repositories/releases" }
+    maven { url 'https://pkgs.dev.azure.com/kaliraja1992/_packaging/mvn_artifacts/maven/v1'
+        credentials {
+            username "VSTS"
+            password System.getenv("VSTS_ENV_ACCESS_TOKEN") ?: "${vstsGradleAccessToken}"
+        } }
     repositories {
         flatDir {
             dirs 'libs'
