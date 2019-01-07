@@ -97,6 +97,10 @@ public class ContentData implements Serializable {
         return size;
     }
 
+    public void setSize(String size) {
+        this.size = size;
+    }
+
     public String getSize(String variantName) {
         if (!StringUtil.isNullOrEmpty(variantName)) {
             Map variants = getVariants();
