@@ -203,7 +203,7 @@ public class ContentServiceImpl extends BaseService implements IContentService {
         Content content = ContentHandler.convertContentModelToBean(contentModelInDB);
 
         String uid = null;
-        if (content.isAvailableLocally()) {
+//        if (content.isAvailableLocally()) {
             uid = ContentHandler.getCurrentUserId(userService);
             if (contentDetailsRequest.isAttachFeedback()) {
                 content.setContentFeedback(ContentHandler.getContentFeedback(contentFeedbackService, content.getIdentifier(), uid));
@@ -212,7 +212,7 @@ public class ContentServiceImpl extends BaseService implements IContentService {
             if (contentDetailsRequest.isAttachContentAccess()) {
                 content.setContentAccess(ContentHandler.getContentAccess(userService, content.getIdentifier(), uid));
             }
-        }
+//        }
 
         if (contentDetailsRequest.isAttachContentMarker()) {
             if (StringUtil.isNullOrEmpty(uid)) {
