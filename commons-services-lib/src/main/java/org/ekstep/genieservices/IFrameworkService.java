@@ -5,6 +5,8 @@ import org.ekstep.genieservices.commons.bean.ChannelDetailsRequest;
 import org.ekstep.genieservices.commons.bean.Framework;
 import org.ekstep.genieservices.commons.bean.FrameworkDetailsRequest;
 import org.ekstep.genieservices.commons.bean.GenieResponse;
+import org.ekstep.genieservices.commons.bean.OrganizationSearchCriteria;
+import org.ekstep.genieservices.commons.bean.OrganizationSearchResult;
 import org.ekstep.genieservices.commons.bean.SystemSetting;
 import org.ekstep.genieservices.commons.bean.SystemSettingRequest;
 
@@ -20,4 +22,7 @@ public interface IFrameworkService {
     GenieResponse<Void> persistFrameworkDetails(String responseBody);
 
     GenieResponse<SystemSetting> getSystemSetting(SystemSettingRequest systemSettingRequest);
+
+    GenieResponse<OrganizationSearchResult> searchOrganization(OrganizationSearchCriteria organizationSearchCriteria);
+
 }

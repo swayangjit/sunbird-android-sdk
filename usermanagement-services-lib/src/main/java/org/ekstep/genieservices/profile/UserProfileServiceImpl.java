@@ -11,19 +11,24 @@ import org.ekstep.genieservices.commons.GenieResponseBuilder;
 import org.ekstep.genieservices.commons.bean.AcceptTermsAndConditionsRequest;
 import org.ekstep.genieservices.commons.bean.EndorseOrAddSkillRequest;
 import org.ekstep.genieservices.commons.bean.FileUploadResult;
+import org.ekstep.genieservices.commons.bean.GenerateOTPRequest;
 import org.ekstep.genieservices.commons.bean.GenieResponse;
+import org.ekstep.genieservices.commons.bean.LocationSearchCriteria;
+import org.ekstep.genieservices.commons.bean.LocationSearchResult;
 import org.ekstep.genieservices.commons.bean.ProfileVisibilityRequest;
 import org.ekstep.genieservices.commons.bean.Session;
 import org.ekstep.genieservices.commons.bean.TenantInfo;
 import org.ekstep.genieservices.commons.bean.TenantInfoRequest;
 import org.ekstep.genieservices.commons.bean.UpdateUserInfoRequest;
 import org.ekstep.genieservices.commons.bean.UploadFileRequest;
+import org.ekstep.genieservices.commons.bean.UserExistRequest;
 import org.ekstep.genieservices.commons.bean.UserProfile;
 import org.ekstep.genieservices.commons.bean.UserProfileDetailsRequest;
 import org.ekstep.genieservices.commons.bean.UserProfileSkill;
 import org.ekstep.genieservices.commons.bean.UserProfileSkillsRequest;
 import org.ekstep.genieservices.commons.bean.UserSearchCriteria;
 import org.ekstep.genieservices.commons.bean.UserSearchResult;
+import org.ekstep.genieservices.commons.bean.VerifyOTPRequest;
 import org.ekstep.genieservices.commons.db.model.NoSqlModel;
 import org.ekstep.genieservices.commons.utils.CollectionUtil;
 import org.ekstep.genieservices.commons.utils.GsonUtil;
@@ -388,6 +393,120 @@ public class UserProfileServiceImpl extends BaseService implements IUserProfileS
                 errorMessage = errorMessages.get(0);
             }
             response = GenieResponseBuilder.getErrorResponse(acceptTermsAndConditionsAPIResponse.getError(), errorMessage, TAG);
+            TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, errorMessage);
+        }
+
+        return response;
+    }
+
+    @Override
+    public GenieResponse<Void> isAlreadyInUse(UserExistRequest userExistRequest) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("request", GsonUtil.toJson(userExistRequest));
+        params.put("logLevel", "2");
+        String methodName = "isAlreadyInUse@UserProfileServiceImpl";
+
+        GenieResponse<Void> response;
+        GenieResponse userExistAPIResponse = UserProfileHandler.isAlreadyInUse(mAppContext, userExistRequest);
+
+        if (userExistAPIResponse.getStatus()) {
+            response = GenieResponseBuilder.getSuccessResponse(ServiceConstants.SUCCESS_RESPONSE);
+
+            TelemetryLogger.logSuccess(mAppContext, response, TAG, methodName, params);
+        } else {
+            List<String> errorMessages = userExistAPIResponse.getErrorMessages();
+            String errorMessage = null;
+            if (!CollectionUtil.isNullOrEmpty(errorMessages)) {
+                errorMessage = errorMessages.get(0);
+            }
+            response = GenieResponseBuilder.getErrorResponse(userExistAPIResponse.getError(), errorMessage, TAG);
+            TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, errorMessage);
+        }
+
+        return response;
+    }
+
+    @Override
+    public GenieResponse<Void> generateOTP(GenerateOTPRequest generateOTPRequest) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("request", GsonUtil.toJson(generateOTPRequest));
+        params.put("logLevel", "2");
+        String methodName = "generateOTP@UserProfileServiceImpl";
+
+        GenieResponse<Void> response;
+        GenieResponse generateOTPAPIResponse = UserProfileHandler.generateOTP(mAppContext, generateOTPRequest);
+
+        if (generateOTPAPIResponse.getStatus()) {
+            response = GenieResponseBuilder.getSuccessResponse(ServiceConstants.SUCCESS_RESPONSE);
+
+            TelemetryLogger.logSuccess(mAppContext, response, TAG, methodName, params);
+        } else {
+            List<String> errorMessages = generateOTPAPIResponse.getErrorMessages();
+            String errorMessage = null;
+            if (!CollectionUtil.isNullOrEmpty(errorMessages)) {
+                errorMessage = errorMessages.get(0);
+            }
+            response = GenieResponseBuilder.getErrorResponse(generateOTPAPIResponse.getError(), errorMessage, TAG);
+            TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, errorMessage);
+        }
+
+        return response;
+    }
+
+    @Override
+    public GenieResponse<Void> verifyOTP(VerifyOTPRequest verifyOTPRequest) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("request", GsonUtil.toJson(verifyOTPRequest));
+        params.put("logLevel", "2");
+        String methodName = "verifyOTP@UserProfileServiceImpl";
+
+        GenieResponse<Void> response;
+        GenieResponse verifyOTPAPIResponse = UserProfileHandler.verifyOTP(mAppContext, verifyOTPRequest);
+
+        if (verifyOTPAPIResponse.getStatus()) {
+            response = GenieResponseBuilder.getSuccessResponse(ServiceConstants.SUCCESS_RESPONSE);
+
+            TelemetryLogger.logSuccess(mAppContext, response, TAG, methodName, params);
+        } else {
+            List<String> errorMessages = verifyOTPAPIResponse.getErrorMessages();
+            String errorMessage = null;
+            if (!CollectionUtil.isNullOrEmpty(errorMessages)) {
+                errorMessage = errorMessages.get(0);
+            }
+            response = GenieResponseBuilder.getErrorResponse(verifyOTPAPIResponse.getError(), errorMessage, TAG);
+            TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, errorMessage);
+        }
+
+        return response;
+    }
+
+    @Override
+    public GenieResponse<LocationSearchResult> searchLocation(LocationSearchCriteria locationSearchCriteria) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("request", GsonUtil.toJson(locationSearchCriteria));
+        params.put("logLevel", "2");
+        String methodName = "searchLocation@UserProfileServiceImpl";
+
+        GenieResponse<LocationSearchResult> response;
+
+        GenieResponse searchLocationAPIResponse = UserProfileHandler.searchLocation(mAppContext, locationSearchCriteria);
+
+        if (searchLocationAPIResponse.getStatus()) {
+            LinkedTreeMap map = GsonUtil.fromJson(searchLocationAPIResponse.getResult().toString(), LinkedTreeMap.class);
+            String result = GsonUtil.toJson(((Map) map.get("result")).get("response"));
+            LocationSearchResult locationSearchResult = new LocationSearchResult(result);
+
+            response = GenieResponseBuilder.getSuccessResponse(ServiceConstants.SUCCESS_RESPONSE);
+            response.setResult(locationSearchResult);
+
+            TelemetryLogger.logSuccess(mAppContext, response, TAG, methodName, params);
+        } else {
+            List<String> errorMessages = searchLocationAPIResponse.getErrorMessages();
+            String errorMessage = null;
+            if (!CollectionUtil.isNullOrEmpty(errorMessages)) {
+                errorMessage = errorMessages.get(0);
+            }
+            response = GenieResponseBuilder.getErrorResponse(searchLocationAPIResponse.getError(), errorMessage, TAG);
             TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, errorMessage);
         }
 

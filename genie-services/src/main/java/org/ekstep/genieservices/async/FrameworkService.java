@@ -8,6 +8,8 @@ import org.ekstep.genieservices.commons.bean.ChannelDetailsRequest;
 import org.ekstep.genieservices.commons.bean.Framework;
 import org.ekstep.genieservices.commons.bean.FrameworkDetailsRequest;
 import org.ekstep.genieservices.commons.bean.GenieResponse;
+import org.ekstep.genieservices.commons.bean.OrganizationSearchCriteria;
+import org.ekstep.genieservices.commons.bean.OrganizationSearchResult;
 import org.ekstep.genieservices.commons.bean.SystemSetting;
 import org.ekstep.genieservices.commons.bean.SystemSettingRequest;
 import org.ekstep.genieservices.commons.bean.enums.MasterDataType;
@@ -104,4 +106,14 @@ public class FrameworkService {
             }
         }, responseHandler);
     }
+
+    public void searchOrganization(final OrganizationSearchCriteria organizationSearchCriteria, IResponseHandler<OrganizationSearchResult> responseHandler) {
+        ThreadPool.getInstance().execute(new IPerformable<OrganizationSearchResult>() {
+            @Override
+            public GenieResponse<OrganizationSearchResult> perform() {
+                return frameworkService.searchOrganization(organizationSearchCriteria);
+            }
+        }, responseHandler);
+    }
+
 }

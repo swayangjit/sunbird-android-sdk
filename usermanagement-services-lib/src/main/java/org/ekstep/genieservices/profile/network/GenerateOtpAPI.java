@@ -10,31 +10,31 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Created on 6/3/18.
- * shriharsh
+ * Created on 08/01/19.
+ *
+ * @author anil
  */
 
-public class SearchUserAPI extends SunbirdBaseAPI {
-    private static final String TAG = SearchUserAPI.class.getSimpleName();
+public class GenerateOtpAPI extends SunbirdBaseAPI {
+    private static final String TAG = GenerateOtpAPI.class.getSimpleName();
 
-    private static final String ENDPOINT = "search";
+    private static final String ENDPOINT = "generate";
 
     private Map<String, Object> requestMap;
-    private Map<String, String> headers;
 
 
-    public SearchUserAPI(AppContext appContext, Map<String, String> customHeaders, Map<String, Object> requestMap) {
+    public GenerateOtpAPI(AppContext appContext, Map<String, Object> requestMap) {
         super(appContext, String.format(Locale.US, "%s/%s",
-                appContext.getParams().getString(IParams.Key.USER_SERVICE_BASE_URL),
-                ENDPOINT), TAG);
+                appContext.getParams().getString(IParams.Key.OTP_SERVICE_BASE_URL),
+                ENDPOINT),
+                TAG);
 
         this.requestMap = requestMap;
-        this.headers = customHeaders;
     }
 
     @Override
     protected Map<String, String> getRequestHeaders() {
-        return headers;
+        return null;
     }
 
     @Override

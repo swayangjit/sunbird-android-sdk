@@ -3,23 +3,31 @@ package org.ekstep.genieservices.profile;
 import org.ekstep.genieservices.commons.AppContext;
 import org.ekstep.genieservices.commons.bean.AcceptTermsAndConditionsRequest;
 import org.ekstep.genieservices.commons.bean.EndorseOrAddSkillRequest;
+import org.ekstep.genieservices.commons.bean.GenerateOTPRequest;
 import org.ekstep.genieservices.commons.bean.GenieResponse;
+import org.ekstep.genieservices.commons.bean.LocationSearchCriteria;
 import org.ekstep.genieservices.commons.bean.ProfileVisibilityRequest;
 import org.ekstep.genieservices.commons.bean.Session;
 import org.ekstep.genieservices.commons.bean.UpdateUserInfoRequest;
 import org.ekstep.genieservices.commons.bean.UploadFileRequest;
+import org.ekstep.genieservices.commons.bean.UserExistRequest;
 import org.ekstep.genieservices.commons.bean.UserSearchCriteria;
+import org.ekstep.genieservices.commons.bean.VerifyOTPRequest;
 import org.ekstep.genieservices.commons.db.model.NoSqlModel;
 import org.ekstep.genieservices.commons.utils.StringUtil;
 import org.ekstep.genieservices.profile.network.AcceptTermsAndConditionsAPI;
 import org.ekstep.genieservices.profile.network.EndorseOrAddSkillAPI;
 import org.ekstep.genieservices.profile.network.FileUploadAPI;
+import org.ekstep.genieservices.profile.network.GenerateOtpAPI;
+import org.ekstep.genieservices.profile.network.GetUserByKeyAPI;
 import org.ekstep.genieservices.profile.network.ProfileSkillsAPI;
 import org.ekstep.genieservices.profile.network.ProfileVisibilityAPI;
+import org.ekstep.genieservices.profile.network.SearchLocationAPI;
 import org.ekstep.genieservices.profile.network.SearchUserAPI;
 import org.ekstep.genieservices.profile.network.TenantInfoAPI;
 import org.ekstep.genieservices.profile.network.UpdateUserInfoAPI;
 import org.ekstep.genieservices.profile.network.UserProfileDetailsAPI;
+import org.ekstep.genieservices.profile.network.VerifyOtpAPI;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -214,6 +222,66 @@ public class UserProfileHandler {
     private static Map<String, Object> getAcceptTermsAndConditionsRequestMap(AcceptTermsAndConditionsRequest acceptTermsAndConditionsRequest) {
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("version", acceptTermsAndConditionsRequest.getVersion());
+
+        return requestMap;
+    }
+
+    public static GenieResponse isAlreadyInUse(AppContext appContext, UserExistRequest userExistRequest) {
+        GetUserByKeyAPI getUserByKeyAPI = new GetUserByKeyAPI(appContext, userExistRequest.getKey(), userExistRequest.getType());
+        return getUserByKeyAPI.get();
+    }
+
+    public static GenieResponse generateOTP(AppContext appContext, GenerateOTPRequest generateOTPRequest) {
+        GenerateOtpAPI generateOtpAPI = new GenerateOtpAPI(appContext, generateOtpAPIRequestMap(generateOTPRequest));
+        return generateOtpAPI.post();
+    }
+
+    private static Map<String, Object> generateOtpAPIRequestMap(GenerateOTPRequest generateOTPRequest) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("key", generateOTPRequest.getKey());
+        requestMap.put("type", generateOTPRequest.getType());
+
+        return requestMap;
+    }
+
+    public static GenieResponse verifyOTP(AppContext appContext, VerifyOTPRequest verifyOTPRequest) {
+        VerifyOtpAPI generateOtpAPI = new VerifyOtpAPI(appContext, verifyOtpAPIRequestMap(verifyOTPRequest));
+        return generateOtpAPI.post();
+    }
+
+    private static Map<String, Object> verifyOtpAPIRequestMap(VerifyOTPRequest verifyOTPRequest) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("key", verifyOTPRequest.getKey());
+        requestMap.put("type", verifyOTPRequest.getType());
+        requestMap.put("otp", verifyOTPRequest.getOtp());
+
+        return requestMap;
+    }
+
+    public static GenieResponse searchLocation(AppContext appContext, LocationSearchCriteria locationSearchCriteria) {
+        SearchLocationAPI searchLocationAPI = new SearchLocationAPI(appContext, getSearchLocationParameters(locationSearchCriteria));
+        return searchLocationAPI.post();
+    }
+
+    private static Map<String, Object> getSearchLocationParameters(LocationSearchCriteria locationSearchCriteria) {
+        Map<String, Object> filterMap = new HashMap<>();
+        if (!StringUtil.isNullOrEmpty(locationSearchCriteria.getType())) {
+            filterMap.put("type", locationSearchCriteria.getType());
+        }
+
+        if (!StringUtil.isNullOrEmpty(locationSearchCriteria.getParentId())) {
+            filterMap.put("parentId", locationSearchCriteria.getParentId());
+        }
+
+        if (!StringUtil.isNullOrEmpty(locationSearchCriteria.getCode())) {
+            filterMap.put("code", locationSearchCriteria.getCode());
+        }
+
+        Map<String, Object> requestMap = new HashMap<>();
+//        requestMap.put("query", locationSearchCriteria.getQuery());
+//        requestMap.put("offset", locationSearchCriteria.getOffset());
+//        requestMap.put("limit", locationSearchCriteria.getLimit());
+        requestMap.put("filters", filterMap);
 
         return requestMap;
     }

@@ -12,6 +12,8 @@ import org.ekstep.genieservices.commons.bean.ChannelDetailsRequest;
 import org.ekstep.genieservices.commons.bean.Framework;
 import org.ekstep.genieservices.commons.bean.FrameworkDetailsRequest;
 import org.ekstep.genieservices.commons.bean.GenieResponse;
+import org.ekstep.genieservices.commons.bean.OrganizationSearchCriteria;
+import org.ekstep.genieservices.commons.bean.OrganizationSearchResult;
 import org.ekstep.genieservices.commons.bean.SystemSetting;
 import org.ekstep.genieservices.commons.bean.SystemSettingRequest;
 import org.ekstep.genieservices.commons.db.model.NoSqlModel;
@@ -22,9 +24,11 @@ import org.ekstep.genieservices.commons.utils.GsonUtil;
 import org.ekstep.genieservices.commons.utils.StringUtil;
 import org.ekstep.genieservices.config.network.ChannelDetailsAPI;
 import org.ekstep.genieservices.config.network.FrameworkDetailsAPI;
+import org.ekstep.genieservices.config.network.SearchOrganizationAPI;
 import org.ekstep.genieservices.config.network.SystemSettingAPI;
 import org.ekstep.genieservices.telemetry.TelemetryLogger;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -378,6 +382,51 @@ public class FrameworkServiceImpl extends BaseService implements IFrameworkServi
                 }
             }
         }).start();
+    }
+
+    @Override
+    public GenieResponse<OrganizationSearchResult> searchOrganization(OrganizationSearchCriteria searchOrganizationCriteria) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("request", GsonUtil.toJson(searchOrganizationCriteria));
+        params.put("logLevel", "2");
+        String methodName = "searchOrganization@FrameworkServiceImpl";
+
+        GenieResponse<OrganizationSearchResult> response;
+
+        SearchOrganizationAPI searchOrganizationAPI = new SearchOrganizationAPI(mAppContext, getSearchOrganizationRequest(searchOrganizationCriteria));
+        GenieResponse searchOrganizationAPIResponse = searchOrganizationAPI.post();
+
+        if (searchOrganizationAPIResponse.getStatus()) {
+            LinkedTreeMap map = GsonUtil.fromJson(searchOrganizationAPIResponse.getResult().toString(), LinkedTreeMap.class);
+            String result = GsonUtil.toJson(((Map) map.get("result")).get("response"));
+            OrganizationSearchResult locationSearchResult = new OrganizationSearchResult(result);
+
+            response = GenieResponseBuilder.getSuccessResponse(ServiceConstants.SUCCESS_RESPONSE);
+            response.setResult(locationSearchResult);
+
+            TelemetryLogger.logSuccess(mAppContext, response, TAG, methodName, params);
+        } else {
+            List<String> errorMessages = searchOrganizationAPIResponse.getErrorMessages();
+            String errorMessage = null;
+            if (!CollectionUtil.isNullOrEmpty(errorMessages)) {
+                errorMessage = errorMessages.get(0);
+            }
+            response = GenieResponseBuilder.getErrorResponse(searchOrganizationAPIResponse.getError(), errorMessage, TAG);
+            TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, errorMessage);
+        }
+
+        return response;
+    }
+
+    private Map<String, Object> getSearchOrganizationRequest(OrganizationSearchCriteria searchOrganizationCriteria) {
+        Map<String, Object> filterMap = new HashMap<>();
+        filterMap.put("isRootOrg", searchOrganizationCriteria.isRootOrg());
+
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("filters", filterMap);
+        requestMap.put("fields", Arrays.asList("orgName", "hashTagId"));
+
+        return requestMap;
     }
 
 }
