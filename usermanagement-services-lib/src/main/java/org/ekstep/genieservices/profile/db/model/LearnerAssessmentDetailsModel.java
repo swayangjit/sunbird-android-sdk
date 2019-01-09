@@ -184,7 +184,7 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
                 StringUtil.join(",", uids),
                 LearnerAssessmentsEntry.COLUMN_NAME_CONTENT_ID,
                 contentId,
-                LearnerAssessmentsEntry.COLUMN_NAME_CORRECT,
+                LearnerAssessmentsEntry.COLUMN_NAME_SCORE,
                 LearnerAssessmentsEntry.COLUMN_NAME_QID);
 
         return query;
@@ -197,7 +197,7 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
                         "WHERE %s IN(%s) AND %s = '%s' AND %s = '%s';",
                 LearnerAssessmentsEntry.COLUMN_NAME_UID,
                 LearnerAssessmentsEntry.COLUMN_NAME_TIME_SPENT,
-                LearnerAssessmentsEntry.COLUMN_NAME_CORRECT,
+                LearnerAssessmentsEntry.COLUMN_NAME_SCORE,
                 LearnerAssessmentsEntry.COLUMN_NAME_MAX_SCORE,
                 LearnerAssessmentsEntry.TABLE_NAME,
                 LearnerAssessmentsEntry.COLUMN_NAME_UID,
@@ -272,8 +272,9 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
         int time = cursor.getInt(1);
         reportSummary.put("time", time);
 
-        int result = cursor.getInt(2);
-        reportSummary.put("result", result);
+        double result = cursor.getDouble(2);
+        DecimalFormat df = new DecimalFormat(".##");
+        reportSummary.put("result", Double.valueOf(df.format(result)));
 
         int maxScore = cursor.getInt(3);
         reportSummary.put("maxScore", maxScore);
