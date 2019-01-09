@@ -221,7 +221,7 @@ public class UserProfileService {
      * @param locationSearchCriteria {@link LocationSearchCriteria}
      * @param responseHandler
      */
-    public void verifyOTP(final LocationSearchCriteria locationSearchCriteria, IResponseHandler<LocationSearchResult> responseHandler) {
+    public void searchLocation(final LocationSearchCriteria locationSearchCriteria, IResponseHandler<LocationSearchResult> responseHandler) {
         ThreadPool.getInstance().execute(new IPerformable<LocationSearchResult>() {
             @Override
             public GenieResponse<LocationSearchResult> perform() {
