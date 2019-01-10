@@ -178,7 +178,7 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
                         "FROM  %s " +
                         "WHERE %s IN(%s) AND %s = '%s' AND %s > 0 " +
                         "group by %s;",
-                LearnerAssessmentsEntry.COLUMN_NAME_Q_INDEX,
+                LearnerAssessmentsEntry.COLUMN_NAME_QID,
                 LearnerAssessmentsEntry.TABLE_NAME,
                 LearnerAssessmentsEntry.COLUMN_NAME_UID,
                 StringUtil.join(",", uids),
@@ -257,10 +257,10 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
     }
 
     private void readAccuracyReportCursorData(IResultSet cursor) {
-        double qIndex = cursor.getDouble(0);
+        double qId = cursor.getDouble(0);
         int correct_count = cursor.getInt(1);
 
-        accuracyMap.put(qIndex, correct_count);
+        accuracyMap.put(qId, correct_count);
     }
 
     private Map<String, Object> readQuestionDetailReportsCursorData(IResultSet cursor) {
