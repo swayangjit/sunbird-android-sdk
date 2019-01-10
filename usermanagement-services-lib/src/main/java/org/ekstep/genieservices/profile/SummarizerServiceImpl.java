@@ -172,7 +172,7 @@ public class SummarizerServiceImpl extends BaseService implements ISummarizerSer
             if (learnerAssessmentDetailsModel1 == null) {
                 response.setResult(questionReportMapList);
             } else {
-                Map<Double, Integer> accuracyReport = learnerAssessmentDetailsModel1.getAccuracyReportMap();
+                Map<String, Integer> accuracyReport = learnerAssessmentDetailsModel1.getAccuracyReportMap();
 
                 if (accuracyReport == null) {
                     response.setResult(questionReportMapList);
