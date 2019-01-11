@@ -172,17 +172,17 @@ public class SummarizerServiceImpl extends BaseService implements ISummarizerSer
             if (learnerAssessmentDetailsModel1 == null) {
                 response.setResult(questionReportMapList);
             } else {
-                Map<Double, Integer> accuracyReport = learnerAssessmentDetailsModel1.getAccuracyReportMap();
+                Map<String, Integer> accuracyReport = learnerAssessmentDetailsModel1.getAccuracyReportMap();
 
                 if (accuracyReport == null) {
                     response.setResult(questionReportMapList);
                 } else {
 
                     for (Map<String, Object> questionReport : questionReportMapList) {
-                        double qIndex = (double) questionReport.get(LearnerAssessmentsEntry.COLUMN_NAME_Q_INDEX);
+                        String qId = String.valueOf(questionReport.get(LearnerAssessmentsEntry.COLUMN_NAME_QID));
 
-                        if (accuracyReport.containsKey(qIndex)) {
-                            questionReport.put("correct_users_count", accuracyReport.get(qIndex));
+                        if (accuracyReport.containsKey(qId)) {
+                            questionReport.put("correct_users_count", accuracyReport.get(qId));
                         }
                     }
 

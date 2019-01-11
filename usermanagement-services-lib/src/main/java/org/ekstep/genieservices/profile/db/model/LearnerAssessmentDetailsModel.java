@@ -51,7 +51,7 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
     private List<LearnerAssessmentDetails> mAssessmentList;
     private String filter;
     private List<Map<String, Object>> reportsMapList;
-    private Map<Double, Integer> accuracyMap;
+    private Map<String, Integer> accuracyMap;
     private int forReports = 1;
 
 
@@ -178,13 +178,13 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
                         "FROM  %s " +
                         "WHERE %s IN(%s) AND %s = '%s' AND %s > 0 " +
                         "group by %s;",
-                LearnerAssessmentsEntry.COLUMN_NAME_Q_INDEX,
+                LearnerAssessmentsEntry.COLUMN_NAME_QID,
                 LearnerAssessmentsEntry.TABLE_NAME,
                 LearnerAssessmentsEntry.COLUMN_NAME_UID,
                 StringUtil.join(",", uids),
                 LearnerAssessmentsEntry.COLUMN_NAME_CONTENT_ID,
                 contentId,
-                LearnerAssessmentsEntry.COLUMN_NAME_CORRECT,
+                LearnerAssessmentsEntry.COLUMN_NAME_SCORE,
                 LearnerAssessmentsEntry.COLUMN_NAME_QID);
 
         return query;
@@ -197,7 +197,7 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
                         "WHERE %s IN(%s) AND %s = '%s' AND %s = '%s';",
                 LearnerAssessmentsEntry.COLUMN_NAME_UID,
                 LearnerAssessmentsEntry.COLUMN_NAME_TIME_SPENT,
-                LearnerAssessmentsEntry.COLUMN_NAME_CORRECT,
+                LearnerAssessmentsEntry.COLUMN_NAME_SCORE,
                 LearnerAssessmentsEntry.COLUMN_NAME_MAX_SCORE,
                 LearnerAssessmentsEntry.TABLE_NAME,
                 LearnerAssessmentsEntry.COLUMN_NAME_UID,
@@ -257,10 +257,10 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
     }
 
     private void readAccuracyReportCursorData(IResultSet cursor) {
-        double qIndex = cursor.getDouble(0);
+        String qId = cursor.getString(0);
         int correct_count = cursor.getInt(1);
 
-        accuracyMap.put(qIndex, correct_count);
+        accuracyMap.put(qId, correct_count);
     }
 
     private Map<String, Object> readQuestionDetailReportsCursorData(IResultSet cursor) {
@@ -272,8 +272,9 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
         int time = cursor.getInt(1);
         reportSummary.put("time", time);
 
-        int result = cursor.getInt(2);
-        reportSummary.put("result", result);
+        double result = cursor.getDouble(2);
+        DecimalFormat df = new DecimalFormat(".##");
+        reportSummary.put("result", Double.valueOf(df.format(result)));
 
         int maxScore = cursor.getInt(3);
         reportSummary.put("maxScore", maxScore);
@@ -528,7 +529,7 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
         return reportsMapList;
     }
 
-    public Map<Double, Integer> getAccuracyReportMap() {
+    public Map<String, Integer> getAccuracyReportMap() {
         if (accuracyMap == null) {
             accuracyMap = new HashMap<>();
         }
