@@ -136,7 +136,6 @@ public class TelemetryServiceImpl extends BaseService implements ITelemetryServi
         if ("3.0".equals(readVersion(event))) {
             EventBus.postEvent(GsonUtil.fromMap(eventModel.getEventMap(), Telemetry.class));
         }
-        System.out.println("GenieSDK-Telemetry"+GsonUtil.toJson(eventModel.getEventMap()));
         Logger.i(TAG, "Event saved successfully");
         return GenieResponseBuilder.getSuccessResponse("Event Saved Successfully", Void.class);
     }
