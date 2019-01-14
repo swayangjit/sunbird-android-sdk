@@ -106,9 +106,13 @@ public class CourseServiceImpl extends BaseService implements ICourseService {
         if (mAppContext.getKeyValueStore().getBoolean(ServiceConstants.PreferenceKey.UPDATE_CONTENT_STATE, false)) {
             StringBuilder stringBuilder = new StringBuilder();
 
-            String query = stringBuilder.append(String.format(Locale.US, "Select * from %s where %s like '%%%s%%'", NoSqlEntry.TABLE_NAME, NoSqlEntry.COLUMN_NAME_KEY, UPDATE_CONTENT_STATE_KEY_PREFIX)).toString();
-            NoSqlModelListModel noSqlModelListModel = NoSqlModelListModel.findWithCustomQuery(mAppContext.getDBSession(), query);
+            String query = stringBuilder.append(
+                    String.format(Locale.US, "Select * from %s where %s like '%%%s%%'",
+                            NoSqlEntry.TABLE_NAME,
+                            NoSqlEntry.COLUMN_NAME_KEY,
+                            UPDATE_CONTENT_STATE_KEY_PREFIX)).toString();
 
+            NoSqlModelListModel noSqlModelListModel = NoSqlModelListModel.findWithCustomQuery(mAppContext.getDBSession(), query);
 
             if (noSqlModelListModel != null) {
                 HashMap<String, List<UpdateContentStateRequest>> userContentStateMap = new HashMap<>();
@@ -116,7 +120,7 @@ public class CourseServiceImpl extends BaseService implements ICourseService {
                 for (NoSqlModel noSqlModel : noSqlModelListModel.getNoSqlModelList()) {
                     UpdateContentStateRequest updateContentStateRequest = GsonUtil.fromJson(noSqlModel.getValue(), UpdateContentStateRequest.class);
 
-                    if (updateContentStateRequest != null && updateContentStateRequest.getUserId() != null)
+                    if (updateContentStateRequest != null && updateContentStateRequest.getUserId() != null) {
                         if (userContentStateMap.containsKey(updateContentStateRequest.getUserId())) {
                             userContentStateMap.get(updateContentStateRequest.getUserId()).add(updateContentStateRequest);
                         } else {
@@ -124,6 +128,7 @@ public class CourseServiceImpl extends BaseService implements ICourseService {
                             updateContentStateRequestList.add(updateContentStateRequest);
                             userContentStateMap.put(updateContentStateRequest.getUserId(), updateContentStateRequestList);
                         }
+                    }
                 }
 
                 //update the content state to server
