@@ -10,17 +10,23 @@ import org.ekstep.genieservices.commons.utils.StringUtil;
 public class FrameworkDetailsRequest {
 
     private String frameworkId;
+    private String[] categories;
     private boolean refreshFrameworkDetails;
     private String filePath;
 
-    private FrameworkDetailsRequest(String frameworkId, boolean refreshFrameworkDetails, String filePath) {
+    private FrameworkDetailsRequest(String frameworkId, String[] categories, boolean refreshFrameworkDetails, String filePath) {
         this.frameworkId = frameworkId;
+        this.categories = categories;
         this.refreshFrameworkDetails = refreshFrameworkDetails;
         this.filePath = filePath;
     }
 
     public String getFrameworkId() {
         return frameworkId;
+    }
+
+    public String[] getCategories() {
+        return categories;
     }
 
     public boolean isRefreshFrameworkDetails() {
@@ -34,6 +40,7 @@ public class FrameworkDetailsRequest {
     public static class Builder {
 
         private String frameworkId;
+        private String[] categories;
         private boolean refreshFrameworkDetails;
         private String filePath;
 
@@ -42,6 +49,14 @@ public class FrameworkDetailsRequest {
                 throw new IllegalArgumentException("frameworkId should not be null or empty.");
             }
             this.frameworkId = frameworkId;
+            return this;
+        }
+
+        /**
+         * Array of category. i.e. "board", "gradeLevel", "subject", "medium", "topic", "purpose"
+         */
+        public Builder frameworkCategories(String[] categories) {
+            this.categories = categories;
             return this;
         }
 
@@ -67,7 +82,11 @@ public class FrameworkDetailsRequest {
                 throw new IllegalStateException("frameworkId required.");
             }
 
-            return new FrameworkDetailsRequest(frameworkId, refreshFrameworkDetails, filePath);
+            if (categories == null || categories.length == 0) {
+                this.categories = new String[]{"board", "medium", "gradeLevel", "subject"};
+            }
+
+            return new FrameworkDetailsRequest(frameworkId, categories, refreshFrameworkDetails, filePath);
         }
     }
 }

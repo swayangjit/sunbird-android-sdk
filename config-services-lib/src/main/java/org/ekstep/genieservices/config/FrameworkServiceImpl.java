@@ -179,7 +179,7 @@ public class FrameworkServiceImpl extends BaseService implements IFrameworkServi
 
             GenieResponse frameworkDetailsAPIResponse;
             if (StringUtil.isNullOrEmpty(responseBody)) {
-                frameworkDetailsAPIResponse = getFrameworkDetailsFromServer(frameworkDetailsRequest.getFrameworkId());
+                frameworkDetailsAPIResponse = getFrameworkDetailsFromServer(frameworkDetailsRequest);
                 if (frameworkDetailsAPIResponse.getStatus()) {
                     String responseBodyFromNetwork = frameworkDetailsAPIResponse.getResult().toString();
                     responseBody = responseBodyFromNetwork;
@@ -202,7 +202,7 @@ public class FrameworkServiceImpl extends BaseService implements IFrameworkServi
             //make a silent call to update in db only if network in available
             // and the ttl is expired
             if (mAppContext.getConnectionInfo().isConnected() && hasExpired(expirationTime)) {
-                GenieResponse frameworkDetailsAPIResponse = getFrameworkDetailsFromServer(frameworkDetailsRequest.getFrameworkId());
+                GenieResponse frameworkDetailsAPIResponse = getFrameworkDetailsFromServer(frameworkDetailsRequest);
                 if (frameworkDetailsAPIResponse.getStatus()) {
                     String responseBodyFromNetwork = frameworkDetailsAPIResponse.getResult().toString();
                     responseBody = responseBodyFromNetwork;
@@ -230,8 +230,9 @@ public class FrameworkServiceImpl extends BaseService implements IFrameworkServi
         return currentTime > expirationTime;
     }
 
-    private GenieResponse getFrameworkDetailsFromServer(String frameworkId) {
-        FrameworkDetailsAPI frameworkDetailsAPI = new FrameworkDetailsAPI(mAppContext, frameworkId);
+    private GenieResponse getFrameworkDetailsFromServer(FrameworkDetailsRequest frameworkDetailsRequest) {
+        String categories = StringUtil.join(",", frameworkDetailsRequest.getCategories());
+        FrameworkDetailsAPI frameworkDetailsAPI = new FrameworkDetailsAPI(mAppContext, frameworkDetailsRequest.getFrameworkId(), categories);
         return frameworkDetailsAPI.get();
     }
 
