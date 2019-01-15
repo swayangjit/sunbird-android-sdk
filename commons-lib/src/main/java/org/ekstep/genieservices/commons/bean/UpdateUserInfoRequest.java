@@ -19,12 +19,15 @@ public class UpdateUserInfoRequest {
     private String[] language;
     private String phone;
     private boolean phoneVerified;
+    private String email;
+    private boolean emailVerified;
     private String profileSummary;
     private String[] subject;
     private String gender;
     private String dob;
     private String[] grade;
     private String location;
+    private String[] locationCodes;
     private String avatar;
     private List<UserWebPages> webPages;
     private List<UserEducation> education;
@@ -33,9 +36,11 @@ public class UpdateUserInfoRequest {
     private Map<String, Object> framework;
 
     private UpdateUserInfoRequest(String userId, String firstName, String lastName, String[] language,
-                                  String phone, boolean phoneVerified, String profileSummary, String[] subject, String gender,
-                                  String dob, String[] grade, String location, String avatar, List<UserWebPages> webPages,
-                                  List<UserEducation> education, List<UserJobProfile> jobProfile, List<UserAddress> address,
+                                  String phone, boolean phoneVerified, String email, boolean emailVerified,
+                                  String profileSummary, String[] subject, String gender, String dob,
+                                  String[] grade, String location, String[] locationCodes, String avatar,
+                                  List<UserWebPages> webPages, List<UserEducation> education,
+                                  List<UserJobProfile> jobProfile, List<UserAddress> address,
                                   Map<String, Object> framework) {
         this.userId = userId;
         this.firstName = firstName;
@@ -43,12 +48,15 @@ public class UpdateUserInfoRequest {
         this.language = language;
         this.phone = phone;
         this.phoneVerified = phoneVerified;
+        this.email = email;
+        this.emailVerified = emailVerified;
         this.profileSummary = profileSummary;
         this.subject = subject;
         this.gender = gender;
         this.dob = dob;
         this.grade = grade;
         this.location = location;
+        this.locationCodes = locationCodes;
         this.avatar = avatar;
         this.webPages = webPages;
         this.education = education;
@@ -81,6 +89,14 @@ public class UpdateUserInfoRequest {
         return phoneVerified;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
     public String getProfileSummary() {
         return profileSummary;
     }
@@ -103,6 +119,10 @@ public class UpdateUserInfoRequest {
 
     public String getLocation() {
         return location;
+    }
+
+    public String[] getLocationCodes() {
+        return locationCodes;
     }
 
     public String getAvatar() {
@@ -137,12 +157,15 @@ public class UpdateUserInfoRequest {
         private String[] language;
         private String phone;
         private boolean phoneVerified;
+        private String email;
+        private boolean emailVerified;
         private String profileSummary;
         private String[] subject;
         private String gender;
         private String dob;
         private String[] grade;
         private String location;
+        private String[] locationCodes;
         private String avatar;
         private List<UserWebPages> webPages;
         private List<UserEducation> education;
@@ -194,6 +217,25 @@ public class UpdateUserInfoRequest {
             return this;
         }
 
+        public Builder phoneVerified() {
+            this.phoneVerified = true;
+            return this;
+        }
+
+        public Builder email(String email) {
+            if (StringUtil.isNullOrEmpty(email)) {
+                throw new IllegalArgumentException("email cannot be null or empty.");
+            }
+
+            this.email = email;
+            return this;
+        }
+
+        public Builder emailVerified() {
+            this.emailVerified = true;
+            return this;
+        }
+
         public Builder profileDescription(String profileSummary) {
             this.profileSummary = profileSummary;
             return this;
@@ -222,6 +264,11 @@ public class UpdateUserInfoRequest {
 
         public Builder location(String location) {
             this.location = location;
+            return this;
+        }
+
+        public Builder locationCodes(String[] locationCodes) {
+            this.locationCodes = locationCodes;
             return this;
         }
 
@@ -300,13 +347,9 @@ public class UpdateUserInfoRequest {
                 throw new IllegalStateException("userId required.");
             }
 
-            if (!StringUtil.isNullOrEmpty(phone)) {
-                this.phoneVerified = true;
-            }
-
             return new UpdateUserInfoRequest(userId, firstName, lastName, language, phone, phoneVerified,
-                    profileSummary, subject, gender, dob, grade, location, avatar, webPages,
-                    education, jobProfile, address, framework);
+                    email, emailVerified, profileSummary, subject, gender, dob, grade, location,
+                    locationCodes, avatar, webPages, education, jobProfile, address, framework);
         }
     }
 }
