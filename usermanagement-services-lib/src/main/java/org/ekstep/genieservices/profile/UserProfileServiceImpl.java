@@ -411,7 +411,9 @@ public class UserProfileServiceImpl extends BaseService implements IUserProfileS
         GenieResponse userExistAPIResponse = UserProfileHandler.isAlreadyInUse(mAppContext, userExistRequest);
 
         if (userExistAPIResponse.getStatus()) {
-            UserExistResponse userExistResponse = new UserExistResponse(userExistAPIResponse.getResult().toString());
+            LinkedTreeMap map = GsonUtil.fromJson(userExistAPIResponse.getResult().toString(), LinkedTreeMap.class);
+            String result = GsonUtil.toJson(((Map) map.get("result")).get("response"));
+            UserExistResponse userExistResponse = new UserExistResponse(result);
 
             response = GenieResponseBuilder.getSuccessResponse(ServiceConstants.SUCCESS_RESPONSE);
             response.setResult(userExistResponse);
