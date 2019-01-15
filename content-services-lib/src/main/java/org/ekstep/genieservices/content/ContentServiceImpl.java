@@ -1400,7 +1400,7 @@ public class ContentServiceImpl extends BaseService implements IContentService {
         } else {
             Map<String, Object> requestMap = ContentHandler.getSearchContentRequest(mAppContext, configService, contentSearchCriteria);
 
-            ContentSearchAPI contentSearchAPI = new ContentSearchAPI(mAppContext, requestMap, String.valueOf(requestMap.get("framework")), String.valueOf(requestMap.get("languageCode")));
+            ContentSearchAPI contentSearchAPI = new ContentSearchAPI(mAppContext, requestMap, String.valueOf(contentSearchCriteria.getFramework()), String.valueOf(contentSearchCriteria.getLanguageCode()));
             GenieResponse apiResponse = contentSearchAPI.post();
             if (apiResponse.getStatus()) {
                 String body = apiResponse.getResult().toString();
