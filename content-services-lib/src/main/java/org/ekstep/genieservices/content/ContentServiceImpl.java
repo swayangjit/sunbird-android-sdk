@@ -204,14 +204,14 @@ public class ContentServiceImpl extends BaseService implements IContentService {
 
         String uid = null;
 //        if (content.isAvailableLocally()) {
-            uid = ContentHandler.getCurrentUserId(userService);
-            if (contentDetailsRequest.isAttachFeedback()) {
-                content.setContentFeedback(ContentHandler.getContentFeedback(contentFeedbackService, content.getIdentifier(), uid));
-            }
+        uid = ContentHandler.getCurrentUserId(userService);
+        if (contentDetailsRequest.isAttachFeedback()) {
+            content.setContentFeedback(ContentHandler.getContentFeedback(contentFeedbackService, content.getIdentifier(), uid));
+        }
 
-            if (contentDetailsRequest.isAttachContentAccess()) {
-                content.setContentAccess(ContentHandler.getContentAccess(userService, content.getIdentifier(), uid));
-            }
+        if (contentDetailsRequest.isAttachContentAccess()) {
+            content.setContentAccess(ContentHandler.getContentAccess(userService, content.getIdentifier(), uid));
+        }
 //        }
 
         if (contentDetailsRequest.isAttachContentMarker()) {
@@ -1400,7 +1400,8 @@ public class ContentServiceImpl extends BaseService implements IContentService {
         } else {
             Map<String, Object> requestMap = ContentHandler.getSearchContentRequest(mAppContext, configService, contentSearchCriteria);
 
-            ContentSearchAPI contentSearchAPI = new ContentSearchAPI(mAppContext, requestMap, String.valueOf(contentSearchCriteria.getFramework()), String.valueOf(contentSearchCriteria.getLanguageCode()));
+            ContentSearchAPI contentSearchAPI = new ContentSearchAPI(mAppContext, requestMap,
+                    contentSearchCriteria.getFramework(), contentSearchCriteria.getLanguageCode());
             GenieResponse apiResponse = contentSearchAPI.post();
             if (apiResponse.getStatus()) {
                 String body = apiResponse.getResult().toString();

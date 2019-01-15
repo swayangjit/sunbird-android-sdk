@@ -26,6 +26,7 @@ public class SunbirdContentSearchCriteria implements Serializable {
     private String[] createdBy;
     private String[] audience;
     private String[] channel;
+    private String[] topic;
     private String[] purpose;
     private String[] pragma;
     private String[] exclPragma;
@@ -47,7 +48,8 @@ public class SunbirdContentSearchCriteria implements Serializable {
 
     private SunbirdContentSearchCriteria(String query, String[] exists, long offset, long limit, String mode, int age,
                                          String[] grade, String[] medium, String[] board,
-                                         String[] createdBy, String[] audience, String[] channel, String[] purpose,
+                                         String[] createdBy, String[] audience, String[] channel,
+                                         String[] topic, String[] purpose,
                                          String[] pragma, String[] exclPragma,
                                          String[] contentStatusArray, String[] facets, String[] contentTypes,
                                          String[] keywords, String[] dialCodes, String[] language,
@@ -65,6 +67,7 @@ public class SunbirdContentSearchCriteria implements Serializable {
         this.createdBy = createdBy;
         this.audience = audience;
         this.channel = channel;
+        this.topic = topic;
         this.purpose = purpose;
         this.pragma = pragma;
         this.exclPragma = exclPragma;
@@ -150,6 +153,10 @@ public class SunbirdContentSearchCriteria implements Serializable {
         return channel;
     }
 
+    public String[] getTopic() {
+        return topic;
+    }
+
     public String[] getPurpose() {
         return purpose;
     }
@@ -232,6 +239,7 @@ public class SunbirdContentSearchCriteria implements Serializable {
         private String[] createdBy;
         private String[] audience;
         private String[] channel;
+        private String[] topic;
         private String[] purpose;
         private String[] pragma;
         private String[] exclPragma;
@@ -355,6 +363,14 @@ public class SunbirdContentSearchCriteria implements Serializable {
         }
 
         /**
+         * Array of topic.
+         */
+        public SearchBuilder topic(String[] topic) {
+            this.topic = topic;
+            return this;
+        }
+
+        /**
          * Array of purpose.
          */
         public SearchBuilder purpose(String[] purpose) {
@@ -437,9 +453,10 @@ public class SunbirdContentSearchCriteria implements Serializable {
                 this.contentStatusArray = new String[]{"Live"};
             }
 
-            return new SunbirdContentSearchCriteria(query, exists, offset, limit, mode, age, grade, medium, board, createdBy,
-                    audience, channel, purpose, pragma, exclPragma, contentStatusArray, facets, contentTypes,
-                    keywords, dialCodes, language, offlineSearch, sortCriteria, SearchType.SEARCH, framework, languageCode);
+            return new SunbirdContentSearchCriteria(query, exists, offset, limit, mode, age, grade,
+                    medium, board, createdBy, audience, channel, topic, purpose, pragma, exclPragma,
+                    contentStatusArray, facets, contentTypes, keywords, dialCodes, language,
+                    offlineSearch, sortCriteria, SearchType.SEARCH, framework, languageCode);
         }
     }
 

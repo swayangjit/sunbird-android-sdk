@@ -12,6 +12,7 @@ import java.util.Map;
 
 public class PageAssembleFilter {
 
+    private String[] topic;
     private String[] purpose;
     private String[] channel;
     private String[] subject;
@@ -26,6 +27,14 @@ public class PageAssembleFilter {
     private String[] domain;
     private Map<String, Integer> compatibilityLevel;
     private String dialcodes;
+
+    public String[] getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String[] topic) {
+        this.topic = topic;
+    }
 
     public String[] getPurpose() {
         return purpose;
@@ -142,6 +151,11 @@ public class PageAssembleFilter {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
+
+        if (!CollectionUtil.isEmpty(topic)) {
+            Arrays.sort(topic);
+            builder.append(StringUtil.join(",", topic));
+        }
 
         if (!CollectionUtil.isEmpty(purpose)) {
             Arrays.sort(purpose);

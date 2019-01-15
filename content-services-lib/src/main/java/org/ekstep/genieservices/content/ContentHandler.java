@@ -1394,12 +1394,24 @@ public class ContentHandler {
             }
         }
 
-        String[] channelArr = criteria.getChannel();
-        if (!CollectionUtil.isEmpty(channelArr)) {
-            for (String channel : channelArr) {
-                applyListingFilter(configService, MasterDataType.CHANNEL, channel, filterMap, false);
-            }
+        if (!CollectionUtil.hasEmptyData(criteria.getTopic())) {
+            filterMap.put("topic", Arrays.asList(criteria.getTopic()));
         }
+
+        if (!CollectionUtil.hasEmptyData(criteria.getPurpose())) {
+            filterMap.put("purpose", Arrays.asList(criteria.getPurpose()));
+        }
+
+        if (!CollectionUtil.hasEmptyData(criteria.getChannel())) {
+            filterMap.put("channel", Arrays.asList(criteria.getChannel()));
+        }
+
+//        String[] channelArr = criteria.getChannel();
+//        if (!CollectionUtil.isEmpty(channelArr)) {
+//            for (String channel : channelArr) {
+//                applyListingFilter(configService, MasterDataType.CHANNEL, channel, filterMap, false);
+//            }
+//        }
 
         boolean exclPragma = true;
         String[] pragmaArr = criteria.getExclPragma();
