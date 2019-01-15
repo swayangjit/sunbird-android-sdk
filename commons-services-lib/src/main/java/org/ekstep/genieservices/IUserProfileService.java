@@ -13,6 +13,7 @@ import org.ekstep.genieservices.commons.bean.TenantInfoRequest;
 import org.ekstep.genieservices.commons.bean.UpdateUserInfoRequest;
 import org.ekstep.genieservices.commons.bean.UploadFileRequest;
 import org.ekstep.genieservices.commons.bean.UserExistRequest;
+import org.ekstep.genieservices.commons.bean.UserExistResponse;
 import org.ekstep.genieservices.commons.bean.UserProfile;
 import org.ekstep.genieservices.commons.bean.UserProfileDetailsRequest;
 import org.ekstep.genieservices.commons.bean.UserProfileSkill;
@@ -44,7 +45,7 @@ public interface IUserProfileService {
 
     GenieResponse<Void> acceptTermsAndConditions(AcceptTermsAndConditionsRequest acceptTermsAndConditionsRequest);
 
-    GenieResponse<Void> isAlreadyInUse(UserExistRequest userExistRequest);
+    GenieResponse<UserExistResponse> isAlreadyInUse(UserExistRequest userExistRequest);
 
     GenieResponse<Void> generateOTP(GenerateOTPRequest generateOTPRequest);
 

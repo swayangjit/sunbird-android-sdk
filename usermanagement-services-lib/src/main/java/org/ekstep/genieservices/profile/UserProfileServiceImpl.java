@@ -22,6 +22,7 @@ import org.ekstep.genieservices.commons.bean.TenantInfoRequest;
 import org.ekstep.genieservices.commons.bean.UpdateUserInfoRequest;
 import org.ekstep.genieservices.commons.bean.UploadFileRequest;
 import org.ekstep.genieservices.commons.bean.UserExistRequest;
+import org.ekstep.genieservices.commons.bean.UserExistResponse;
 import org.ekstep.genieservices.commons.bean.UserProfile;
 import org.ekstep.genieservices.commons.bean.UserProfileDetailsRequest;
 import org.ekstep.genieservices.commons.bean.UserProfileSkill;
@@ -400,17 +401,20 @@ public class UserProfileServiceImpl extends BaseService implements IUserProfileS
     }
 
     @Override
-    public GenieResponse<Void> isAlreadyInUse(UserExistRequest userExistRequest) {
+    public GenieResponse<UserExistResponse> isAlreadyInUse(UserExistRequest userExistRequest) {
         Map<String, Object> params = new HashMap<>();
         params.put("request", GsonUtil.toJson(userExistRequest));
         params.put("logLevel", "2");
         String methodName = "isAlreadyInUse@UserProfileServiceImpl";
 
-        GenieResponse<Void> response;
+        GenieResponse<UserExistResponse> response;
         GenieResponse userExistAPIResponse = UserProfileHandler.isAlreadyInUse(mAppContext, userExistRequest);
 
         if (userExistAPIResponse.getStatus()) {
+            UserExistResponse userExistResponse = new UserExistResponse(userExistAPIResponse.getResult().toString());
+
             response = GenieResponseBuilder.getSuccessResponse(ServiceConstants.SUCCESS_RESPONSE);
+            response.setResult(userExistResponse);
 
             TelemetryLogger.logSuccess(mAppContext, response, TAG, methodName, params);
         } else {

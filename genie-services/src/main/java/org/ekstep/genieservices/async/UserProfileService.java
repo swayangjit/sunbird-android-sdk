@@ -16,6 +16,7 @@ import org.ekstep.genieservices.commons.bean.TenantInfoRequest;
 import org.ekstep.genieservices.commons.bean.UpdateUserInfoRequest;
 import org.ekstep.genieservices.commons.bean.UploadFileRequest;
 import org.ekstep.genieservices.commons.bean.UserExistRequest;
+import org.ekstep.genieservices.commons.bean.UserExistResponse;
 import org.ekstep.genieservices.commons.bean.UserProfile;
 import org.ekstep.genieservices.commons.bean.UserProfileDetailsRequest;
 import org.ekstep.genieservices.commons.bean.UserProfileSkill;
@@ -174,12 +175,12 @@ public class UserProfileService {
      * This api is used to check if email/phone number is already in use.
      *
      * @param userExistRequest {@link UserExistRequest}
-     * @param responseHandler
+     * @param responseHandler  {@link IResponseHandler<UserExistResponse>}
      */
-    public void isAlreadyInUse(final UserExistRequest userExistRequest, IResponseHandler<Void> responseHandler) {
-        ThreadPool.getInstance().execute(new IPerformable<Void>() {
+    public void isAlreadyInUse(final UserExistRequest userExistRequest, IResponseHandler<UserExistResponse> responseHandler) {
+        ThreadPool.getInstance().execute(new IPerformable<UserExistResponse>() {
             @Override
-            public GenieResponse<Void> perform() {
+            public GenieResponse<UserExistResponse> perform() {
                 return userProfileService.isAlreadyInUse(userExistRequest);
             }
         }, responseHandler);
