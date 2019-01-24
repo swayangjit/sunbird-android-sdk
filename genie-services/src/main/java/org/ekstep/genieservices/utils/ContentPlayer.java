@@ -144,23 +144,23 @@ public class ContentPlayer {
 
         if (extraInfo != null) {
             if(extraInfo.containsKey("visitorId")) {
-                CorrelationData cData1 = new CorrelationData("visitorId", extraInfo.get("visitorId").toString());
+                CorrelationData cData1 = new CorrelationData(extraInfo.get("visitorId").toString(), "visitorId");
                 correlationDataList.add(cData1);
             }
             if(extraInfo.containsKey("stallId")) {
-                CorrelationData cData1 = new CorrelationData("stallId", extraInfo.get("stallId").toString());
+                CorrelationData cData1 = new CorrelationData(extraInfo.get("stallId").toString(), "stallId");
                 correlationDataList.add(cData1);
             }
             if(extraInfo.containsKey("idea")) {
-                CorrelationData cData1 = new CorrelationData("idea", extraInfo.get("idea").toString());
+                CorrelationData cData1 = new CorrelationData(extraInfo.get("idea").toString(), "idea");
                 correlationDataList.add(cData1);
             }
             if(extraInfo.containsKey("period")) {
-                CorrelationData cData1 = new CorrelationData("period", extraInfo.get("period").toString());
+                CorrelationData cData1 = new CorrelationData(extraInfo.get("period").toString(), "period");
                 correlationDataList.add(cData1);
             }
             if(extraInfo.containsKey("topic")) {
-                CorrelationData cData1 = new CorrelationData("topic", extraInfo.get("topic").toString());
+                CorrelationData cData1 = new CorrelationData(extraInfo.get("topic").toString(), "topic");
                 correlationDataList.add(cData1);
             }
         }
