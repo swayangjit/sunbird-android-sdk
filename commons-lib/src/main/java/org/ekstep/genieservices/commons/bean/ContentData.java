@@ -61,6 +61,7 @@ public class ContentData implements Serializable {
     private String creators;
     private String contributors;
     private String streamingUrl;
+    private List<String> topic;
 
     public ContentData() {
     }
@@ -321,6 +322,14 @@ public class ContentData implements Serializable {
 
     public void setStreamingUrl(String streamingUrl) {
         this.streamingUrl = streamingUrl;
+    }
+
+    public List<String> getTopic() {
+        return topic;
+    }
+
+    public void setTopic(List<String> topic) {
+        this.topic = topic;
     }
 
     @Override
