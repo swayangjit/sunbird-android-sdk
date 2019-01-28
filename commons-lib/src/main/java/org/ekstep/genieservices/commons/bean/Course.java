@@ -3,6 +3,7 @@ package org.ekstep.genieservices.commons.bean;
 import org.ekstep.genieservices.commons.utils.GsonUtil;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -19,6 +20,7 @@ public class Course {
     private String addedBy;
     private String delta;
     private String contentId;
+    private Map<String, Object> batch;
     private boolean active;
     private String description;
     private String courseLogoUrl;
@@ -76,6 +78,14 @@ public class Course {
 
     public void setContentId(String contentId) {
         this.contentId = contentId;
+    }
+
+    public Map<String, Object> getBatch() {
+        return batch;
+    }
+
+    public void setBatch(Map<String, Object> batch) {
+        this.batch = batch;
     }
 
     public boolean isActive() {
