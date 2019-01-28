@@ -22,7 +22,7 @@ public class TelemetrySyncAPI extends BaseAPI {
 
     public TelemetrySyncAPI(AppContext appContext, byte[] data) {
         super(appContext,
-                String.format(Locale.US, "%s", appContext.getParams().getString(IParams.Key.TELEMETRY_BASE_URL)),
+                String.format(Locale.US, "%s/%s", appContext.getParams().getString(IParams.Key.TELEMETRY_BASE_URL), ENDPOINTS),
                 TAG);
         mData = data;
     }

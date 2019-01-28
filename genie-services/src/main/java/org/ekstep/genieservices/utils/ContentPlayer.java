@@ -141,32 +141,6 @@ public class ContentPlayer {
         }
         correlationDataList.add(cData);
 
-
-        if (extraInfo != null) {
-            if(extraInfo.containsKey("visitorId")) {
-                CorrelationData cData1 = new CorrelationData(extraInfo.get("visitorId").toString(), "visitorId");
-                correlationDataList.add(cData1);
-            }
-            if(extraInfo.containsKey("stallId")) {
-                CorrelationData cData1 = new CorrelationData(extraInfo.get("stallId").toString(), "stallId");
-                correlationDataList.add(cData1);
-            }
-            if(extraInfo.containsKey("idea")) {
-                CorrelationData cData1 = new CorrelationData(extraInfo.get("idea").toString(), "idea");
-                correlationDataList.add(cData1);
-            }
-            if(extraInfo.containsKey("period")) {
-                CorrelationData cData1 = new CorrelationData(extraInfo.get("period").toString(), "period");
-                correlationDataList.add(cData1);
-            }
-            if(extraInfo.containsKey("topic")) {
-                CorrelationData cData1 = new CorrelationData(extraInfo.get("topic").toString(), "topic");
-                correlationDataList.add(cData1);
-            }
-        }
-
-
-
         contextMap.put("cdata", correlationDataList);
 
         bundleMap.put("context", contextMap);
