@@ -31,6 +31,7 @@ import org.ekstep.genieservices.commons.bean.MasterData;
 import org.ekstep.genieservices.commons.bean.MasterDataValues;
 import org.ekstep.genieservices.commons.bean.RecommendedContentRequest;
 import org.ekstep.genieservices.commons.bean.RelatedContentRequest;
+import org.ekstep.genieservices.commons.bean.StreamingUrlAvailable;
 import org.ekstep.genieservices.commons.bean.SummarizerContentFilterCriteria;
 import org.ekstep.genieservices.commons.bean.SunbirdContentSearchCriteria;
 import org.ekstep.genieservices.commons.bean.UserSession;
@@ -427,6 +428,12 @@ public class ContentHandler {
             @Override
             public void run() {
 
+
+                boolean sendStreamUrlEvent = false;
+                if (existingContentModel.getServerData() == null) {
+                    sendStreamUrlEvent = true;
+                }
+
                 GenieResponse contentDetailsAPIResponse = fetchContentDetailsFromServer(appContext, contentIdentifier);
                 if (contentDetailsAPIResponse.getStatus()) {
                     Map contentData = getContentDetailsMap(contentDetailsAPIResponse.getResult().toString());
@@ -445,6 +452,13 @@ public class ContentHandler {
                             if (isUpdateAvailable(serverContentData, localContentData)) {
                                 //Fire the event saying an update is available for the identifier
                                 EventBus.postEvent(new ContentUpdateAvailable(contentIdentifier));
+                            }
+
+                            if (sendStreamUrlEvent
+                                    && !StringUtil.isNullOrEmpty(serverContentData.getStreamingUrl())
+                                    && StringUtil.isNullOrEmpty(localContentData.getStreamingUrl())) {
+                                //Fire the event saying an streaming url is available for the identifier
+                                EventBus.postEvent(new StreamingUrlAvailable(contentIdentifier, serverContentData.getStreamingUrl()));
                             }
                         }
                     }
