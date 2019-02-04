@@ -1704,13 +1704,13 @@ public class ContentHandler {
             return filterBuilder.build();
         }
 
-        Map<String, Object> ordinalsMap = new HashMap<>();
-        if (configService != null) {
-            GenieResponse<Map<String, Object>> ordinalsResponse = configService.getOrdinals();
-            if (ordinalsResponse.getStatus()) {
-                ordinalsMap = ordinalsResponse.getResult();
-            }
-        }
+//        Map<String, Object> ordinalsMap = new HashMap<>();
+//        if (configService != null) {
+//            GenieResponse<Map<String, Object>> ordinalsResponse = configService.getOrdinals();
+//            if (ordinalsResponse.getStatus()) {
+//                ordinalsMap = ordinalsResponse.getResult();
+//            }
+//        }
 
         for (Map<String, Object> facetMap : facets) {
             ContentSearchFilter filter = new ContentSearchFilter();
@@ -1725,9 +1725,9 @@ public class ContentHandler {
             }
 
             List<String> facetOrder = null;
-            if (ordinalsMap.containsKey(facetName)) {
-                facetOrder = (List<String>) ordinalsMap.get(facetName);
-            }
+//            if (ordinalsMap.containsKey(facetName)) {
+//                facetOrder = (List<String>) ordinalsMap.get(facetName);
+//            }
 
             List<String> appliedFilter = null;
             if (appliedFilterMap != null) {
