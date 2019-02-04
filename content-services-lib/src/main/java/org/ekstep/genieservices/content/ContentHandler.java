@@ -2197,7 +2197,12 @@ public class ContentHandler {
 
         if (ContentConstants.MimeType.COLLECTION.equals(contentData.getMimeType())) {
             Map variantMap = contentData.getVariants();
-            if (variantMap != null && variantMap.get("spine") != null) {
+            if (variantMap != null && variantMap.get("online") != null) {
+                Map spineData = (Map) variantMap.get("online");
+                if (spineData != null) {
+                    downloadUrl = spineData.get("ecarUrl").toString();
+                }
+            } else if (variantMap != null && variantMap.get("spine") != null) {
                 Map spineData = (Map) variantMap.get("spine");
                 if (spineData != null) {
                     downloadUrl = spineData.get("ecarUrl").toString();
