@@ -135,7 +135,7 @@ public class PageServiceImpl extends BaseService implements IPageService {
         String key = getKeyForDB(pageAssembleCriteria);
         NoSqlModel pageData = NoSqlModel.build(mAppContext.getDBSession(), key, response);
         Map map = GsonUtil.fromJson(pageData.getValue(), Map.class);
-        if (map != null) {
+        if (map != null && !pageAssembleCriteria.getName().contains("DIAL Code Consumption")) {
             Map result = (Map) map.get("result");
             Double ttl = (Double) result.get("ttl");
             saveDataExpirationTime(ttl, key);
@@ -147,7 +147,6 @@ public class PageServiceImpl extends BaseService implements IPageService {
         } else {
             pageData.update();
         }
-        pageData.save();
     }
 
     private void saveDataExpirationTime(Double ttl, String key) {
