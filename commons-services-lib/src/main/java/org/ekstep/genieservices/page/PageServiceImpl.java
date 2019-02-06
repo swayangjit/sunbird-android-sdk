@@ -30,7 +30,7 @@ public class PageServiceImpl extends BaseService implements IPageService {
 
     private static final String KEY_PAGE_ASSEMBLE = "pageAssemble-";
 
-    private static final Double DEFAULT_TTL = 3d;   // In hours
+    private static final Double DEFAULT_TTL = 30d;   // In minutes
 
 
     public PageServiceImpl(AppContext appContext) {
@@ -135,7 +135,7 @@ public class PageServiceImpl extends BaseService implements IPageService {
         String key = getKeyForDB(pageAssembleCriteria);
         NoSqlModel pageData = NoSqlModel.build(mAppContext.getDBSession(), key, response);
         Map map = GsonUtil.fromJson(pageData.getValue(), Map.class);
-        if (map != null && !pageAssembleCriteria.getName().contains("DIAL Code Consumption")) {
+        if (map != null) {
             Map result = (Map) map.get("result");
             Double ttl = (Double) result.get("ttl");
             saveDataExpirationTime(ttl, key);
@@ -153,7 +153,7 @@ public class PageServiceImpl extends BaseService implements IPageService {
         if (ttl == null || ttl == 0) {
             ttl = DEFAULT_TTL;
         }
-        long ttlInMilliSeconds = (long) (ttl * DateUtil.MILLISECONDS_IN_AN_HOUR);
+        long ttlInMilliSeconds = (long) (ttl * DateUtil.MILLISECONDS_IN_A_MINUTE);
         Long currentTime = DateUtil.getEpochTime();
         long expiration_time = ttlInMilliSeconds + currentTime;
 
