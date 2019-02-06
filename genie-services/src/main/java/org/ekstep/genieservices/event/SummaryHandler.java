@@ -88,20 +88,28 @@ public class SummaryHandler {
         String userId = (String) contentContextMap.get("userId");
         String courseId = (String) contentContextMap.get("courseId");
         String batchId = (String) contentContextMap.get("batchId");
-        String contentId = event.getObject().getId();
+        int batchStatus = 0;
+        if (contentContextMap.containsKey("batchStatus")) {
+            batchStatus = (int) contentContextMap.get("batchStatus");
+        }
 
-        int contentStatus = checkStatusOfContent(userId, courseId, batchId, contentId, courseService);
+        int BATCH_EXPIRED = 2;
+        if (batchStatus == BATCH_EXPIRED) { // If the batch is expired then do not update content status.
+            String contentId = event.getObject().getId();
 
-        if (eventType.equalsIgnoreCase("start") && contentStatus == 0) {
-            //update content state to 1 and progress to 5
-            courseService.updateContentState(getUpdateContentStateRequest(userId, courseId, batchId, contentId, 1, 5));
-        } else if ((eventType.equalsIgnoreCase("end") && contentStatus == 0)
-                || (eventType.equalsIgnoreCase("end") && contentStatus == 1)) {
-            //update content state to  2 and progress to 100
-            GenieResponse<Void> response = courseService.updateContentState(getUpdateContentStateRequest(userId, courseId, batchId, contentId, 2, 100));
+            int contentStatus = checkStatusOfContent(userId, courseId, batchId, contentId, courseService);
 
-            //fire an event to be handled on mobile side to call the getEnrolledCourses and show the latest progress that was manipulated
-            EventBus.postEvent(new GenericEvent(COURSE_STATUS_UPDATED_SUCCESSFULLY));
+            if (eventType.equalsIgnoreCase("start") && contentStatus == 0) {
+                //update content state to 1 and progress to 5
+                courseService.updateContentState(getUpdateContentStateRequest(userId, courseId, batchId, contentId, 1, 5));
+            } else if ((eventType.equalsIgnoreCase("end") && contentStatus == 0)
+                    || (eventType.equalsIgnoreCase("end") && contentStatus == 1)) {
+                //update content state to  2 and progress to 100
+                GenieResponse<Void> response = courseService.updateContentState(getUpdateContentStateRequest(userId, courseId, batchId, contentId, 2, 100));
+
+                //fire an event to be handled on mobile side to call the getEnrolledCourses and show the latest progress that was manipulated
+                EventBus.postEvent(new GenericEvent(COURSE_STATUS_UPDATED_SUCCESSFULLY));
+            }
         }
     }
 
