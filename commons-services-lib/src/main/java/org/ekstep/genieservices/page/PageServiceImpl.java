@@ -55,18 +55,20 @@ public class PageServiceImpl extends BaseService implements IPageService {
         //check if is their any data stored in DB, for the key we have generated
         NoSqlModel pageData = NoSqlModel.findByKey(mAppContext.getDBSession(), key);
 
-        if (pageData == null) {
+        if (pageData == null || pageAssembleCriteria.getName().contains("DIAL Code Consumption")) {
             GenieResponse pageAssembleResponse = invokeAPI(pageAssembleCriteria);
             if (pageAssembleResponse.getStatus()) {
                 String jsonResponse = pageAssembleResponse.getResult().toString();
                 pageData = NoSqlModel.build(mAppContext.getDBSession(), key, jsonResponse);
                 savePageData(pageData.getValue(), pageAssembleCriteria);
             } else {
-                response = GenieResponseBuilder.getErrorResponse(pageAssembleResponse.getError(),
-                        pageAssembleResponse.getMessage(), TAG);
+                if (pageData == null) {
+                    response = GenieResponseBuilder.getErrorResponse(pageAssembleResponse.getError(),
+                            pageAssembleResponse.getMessage(), TAG);
 
-                TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, pageAssembleResponse.getMessage());
-                return response;
+                    TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, pageAssembleResponse.getMessage());
+                    return response;
+                }
             }
         } else if (hasExpired(expirationTime)) {
             refreshPageData(pageAssembleCriteria);
