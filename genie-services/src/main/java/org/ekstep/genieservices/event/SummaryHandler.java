@@ -88,13 +88,13 @@ public class SummaryHandler {
         String userId = (String) contentContextMap.get("userId");
         String courseId = (String) contentContextMap.get("courseId");
         String batchId = (String) contentContextMap.get("batchId");
-        Double batchStatus = 0.0;
+        double batchStatus = 0.0;
         if (contentContextMap.containsKey("batchStatus")) {
-            batchStatus = (Double) contentContextMap.get("batchStatus");
+            batchStatus = (double) contentContextMap.get("batchStatus");
         }
 
-        int BATCH_EXPIRED = 2;
-        if (batchStatus == BATCH_EXPIRED) { // If the batch is expired then do not update content status.
+        int BATCH_IN_PROGRESS = 1;
+        if (batchStatus == BATCH_IN_PROGRESS) { // If the batch is expired then do not update content status.
             String contentId = event.getObject().getId();
 
             int contentStatus = checkStatusOfContent(userId, courseId, batchId, contentId, courseService);
