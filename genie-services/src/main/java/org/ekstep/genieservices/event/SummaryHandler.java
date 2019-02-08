@@ -88,9 +88,9 @@ public class SummaryHandler {
         String userId = (String) contentContextMap.get("userId");
         String courseId = (String) contentContextMap.get("courseId");
         String batchId = (String) contentContextMap.get("batchId");
-        int batchStatus = 0;
+        Double batchStatus = 0.0;
         if (contentContextMap.containsKey("batchStatus")) {
-            batchStatus = (int) contentContextMap.get("batchStatus");
+            batchStatus = (Double) contentContextMap.get("batchStatus");
         }
 
         int BATCH_EXPIRED = 2;
