@@ -675,7 +675,7 @@ public class ContentServiceImpl extends BaseService implements IContentService {
 
             int indexOfCurrentContentIdentifier = contentsKeyList.indexOf(currentIdentifiers);
             String prevContentIdentifier = null;
-            if (indexOfCurrentContentIdentifier < (contentsKeyList.size() - 1)) {
+            if (indexOfCurrentContentIdentifier != -1 && indexOfCurrentContentIdentifier < (contentsKeyList.size() - 1)) {
                 prevContentIdentifier = contentsKeyList.get(indexOfCurrentContentIdentifier + 1);
             }
 
