@@ -1,23 +1,34 @@
 package org.ekstep.genieservices.profile;
 
 import org.ekstep.genieservices.commons.AppContext;
+import org.ekstep.genieservices.commons.bean.AcceptTermsAndConditionsRequest;
 import org.ekstep.genieservices.commons.bean.EndorseOrAddSkillRequest;
+import org.ekstep.genieservices.commons.bean.GenerateOTPRequest;
 import org.ekstep.genieservices.commons.bean.GenieResponse;
+import org.ekstep.genieservices.commons.bean.LocationSearchCriteria;
 import org.ekstep.genieservices.commons.bean.ProfileVisibilityRequest;
 import org.ekstep.genieservices.commons.bean.Session;
 import org.ekstep.genieservices.commons.bean.UpdateUserInfoRequest;
 import org.ekstep.genieservices.commons.bean.UploadFileRequest;
+import org.ekstep.genieservices.commons.bean.UserExistRequest;
 import org.ekstep.genieservices.commons.bean.UserSearchCriteria;
+import org.ekstep.genieservices.commons.bean.VerifyOTPRequest;
 import org.ekstep.genieservices.commons.db.model.NoSqlModel;
+import org.ekstep.genieservices.commons.utils.CollectionUtil;
 import org.ekstep.genieservices.commons.utils.StringUtil;
+import org.ekstep.genieservices.profile.network.AcceptTermsAndConditionsAPI;
 import org.ekstep.genieservices.profile.network.EndorseOrAddSkillAPI;
 import org.ekstep.genieservices.profile.network.FileUploadAPI;
+import org.ekstep.genieservices.profile.network.GenerateOtpAPI;
+import org.ekstep.genieservices.profile.network.GetUserByKeyAPI;
 import org.ekstep.genieservices.profile.network.ProfileSkillsAPI;
 import org.ekstep.genieservices.profile.network.ProfileVisibilityAPI;
+import org.ekstep.genieservices.profile.network.SearchLocationAPI;
 import org.ekstep.genieservices.profile.network.SearchUserAPI;
 import org.ekstep.genieservices.profile.network.TenantInfoAPI;
 import org.ekstep.genieservices.profile.network.UpdateUserInfoAPI;
 import org.ekstep.genieservices.profile.network.UserProfileDetailsAPI;
+import org.ekstep.genieservices.profile.network.VerifyOtpAPI;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -181,24 +192,157 @@ public class UserProfileHandler {
     private static Map<String, Object> getUpdateUserInfoRequestMap(UpdateUserInfoRequest updateUserInfoRequest) {
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("userId", updateUserInfoRequest.getUserId());
-        requestMap.put("firstName", updateUserInfoRequest.getFirstName());
-        requestMap.put("lastName", updateUserInfoRequest.getLastName());
-        requestMap.put("language", updateUserInfoRequest.getLanguage());
-        requestMap.put("phone", updateUserInfoRequest.getPhone());
-        // TODO: 22/6/18 : Not required for now, need more discussion. 
-//        requestMap.put("phoneVerified", updateUserInfoRequest.isPhoneVerified());
-        requestMap.put("profileSummary", updateUserInfoRequest.getProfileSummary());
-        requestMap.put("subject", updateUserInfoRequest.getSubject());
-        requestMap.put("gender", updateUserInfoRequest.getGender());
-        requestMap.put("dob", updateUserInfoRequest.getDob());
-        requestMap.put("grade", updateUserInfoRequest.getGrade());
-        requestMap.put("location", updateUserInfoRequest.getLocation());
-        requestMap.put("avatar", updateUserInfoRequest.getAvatar());
-        requestMap.put("webPages", updateUserInfoRequest.getWebPages());
-        requestMap.put("education", updateUserInfoRequest.getEducation());
-        requestMap.put("jobProfile", updateUserInfoRequest.getJobProfile());
-        requestMap.put("address", updateUserInfoRequest.getAddress());
+
+        if (!StringUtil.isNullOrEmpty(updateUserInfoRequest.getFirstName())) {
+            requestMap.put("firstName", updateUserInfoRequest.getFirstName());
+        }
+
+        if (!StringUtil.isNullOrEmpty(updateUserInfoRequest.getLastName())) {
+            requestMap.put("lastName", updateUserInfoRequest.getLastName());
+        }
+
+        if (!CollectionUtil.isEmpty(updateUserInfoRequest.getLanguage())) {
+            requestMap.put("language", updateUserInfoRequest.getLanguage());
+        }
+
+        if (updateUserInfoRequest.isPhoneVerified()
+                && !StringUtil.isNullOrEmpty(updateUserInfoRequest.getPhone())) {
+            requestMap.put("phone", updateUserInfoRequest.getPhone());
+            requestMap.put("phoneVerified", updateUserInfoRequest.isPhoneVerified());
+        }
+
+        if (updateUserInfoRequest.isEmailVerified()
+                && !StringUtil.isNullOrEmpty(updateUserInfoRequest.getEmail())) {
+            requestMap.put("email", updateUserInfoRequest.getEmail());
+            requestMap.put("emailVerified", updateUserInfoRequest.isEmailVerified());
+        }
+
+        if (!StringUtil.isNullOrEmpty(updateUserInfoRequest.getProfileSummary())) {
+            requestMap.put("profileSummary", updateUserInfoRequest.getProfileSummary());
+        }
+
+        if (!CollectionUtil.isEmpty(updateUserInfoRequest.getSubject())) {
+            requestMap.put("subject", updateUserInfoRequest.getSubject());
+        }
+
+        if (!StringUtil.isNullOrEmpty(updateUserInfoRequest.getGender())) {
+            requestMap.put("gender", updateUserInfoRequest.getGender());
+        }
+
+        if (!StringUtil.isNullOrEmpty(updateUserInfoRequest.getDob())) {
+            requestMap.put("dob", updateUserInfoRequest.getDob());
+        }
+
+        if (!CollectionUtil.isEmpty(updateUserInfoRequest.getGrade())) {
+            requestMap.put("grade", updateUserInfoRequest.getGrade());
+        }
+
+        if (!StringUtil.isNullOrEmpty(updateUserInfoRequest.getLocation())) {
+            requestMap.put("location", updateUserInfoRequest.getLocation());
+        }
+
+        if (!CollectionUtil.isEmpty(updateUserInfoRequest.getLocationCodes())) {
+            requestMap.put("locationCodes", updateUserInfoRequest.getLocationCodes());
+        }
+
+        if (!StringUtil.isNullOrEmpty(updateUserInfoRequest.getAvatar())) {
+            requestMap.put("avatar", updateUserInfoRequest.getAvatar());
+        }
+
+        if (!CollectionUtil.isNullOrEmpty(updateUserInfoRequest.getWebPages())) {
+            requestMap.put("webPages", updateUserInfoRequest.getWebPages());
+        }
+
+        if (!CollectionUtil.isNullOrEmpty(updateUserInfoRequest.getEducation())) {
+            requestMap.put("education", updateUserInfoRequest.getEducation());
+        }
+
+        if (!CollectionUtil.isNullOrEmpty(updateUserInfoRequest.getJobProfile())) {
+            requestMap.put("jobProfile", updateUserInfoRequest.getJobProfile());
+        }
+
+        if (!CollectionUtil.isNullOrEmpty(updateUserInfoRequest.getAddress())) {
+            requestMap.put("address", updateUserInfoRequest.getAddress());
+        }
+
+        if (updateUserInfoRequest.getFramework() != null && !updateUserInfoRequest.getFramework().isEmpty()) {
+            requestMap.put("framework", updateUserInfoRequest.getFramework());
+        }
+
         return requestMap;
     }
 
+    public static GenieResponse acceptTermsAndConditions(AppContext appContext, Session sessionData,
+                                                         AcceptTermsAndConditionsRequest acceptTermsAndConditionsRequest) {
+        AcceptTermsAndConditionsAPI acceptTermsAndConditionsAPI = new AcceptTermsAndConditionsAPI(appContext, getCustomHeaders(sessionData),
+                getAcceptTermsAndConditionsRequestMap(acceptTermsAndConditionsRequest));
+        return acceptTermsAndConditionsAPI.post();
+    }
+
+    private static Map<String, Object> getAcceptTermsAndConditionsRequestMap(AcceptTermsAndConditionsRequest acceptTermsAndConditionsRequest) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("version", acceptTermsAndConditionsRequest.getVersion());
+
+        return requestMap;
+    }
+
+    public static GenieResponse isAlreadyInUse(AppContext appContext, UserExistRequest userExistRequest) {
+        GetUserByKeyAPI getUserByKeyAPI = new GetUserByKeyAPI(appContext, userExistRequest.getKey(), userExistRequest.getType());
+        return getUserByKeyAPI.get();
+    }
+
+    public static GenieResponse generateOTP(AppContext appContext, GenerateOTPRequest generateOTPRequest) {
+        GenerateOtpAPI generateOtpAPI = new GenerateOtpAPI(appContext, generateOtpAPIRequestMap(generateOTPRequest));
+        return generateOtpAPI.post();
+    }
+
+    private static Map<String, Object> generateOtpAPIRequestMap(GenerateOTPRequest generateOTPRequest) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("key", generateOTPRequest.getKey());
+        requestMap.put("type", generateOTPRequest.getType());
+
+        return requestMap;
+    }
+
+    public static GenieResponse verifyOTP(AppContext appContext, VerifyOTPRequest verifyOTPRequest) {
+        VerifyOtpAPI generateOtpAPI = new VerifyOtpAPI(appContext, verifyOtpAPIRequestMap(verifyOTPRequest));
+        return generateOtpAPI.post();
+    }
+
+    private static Map<String, Object> verifyOtpAPIRequestMap(VerifyOTPRequest verifyOTPRequest) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("key", verifyOTPRequest.getKey());
+        requestMap.put("type", verifyOTPRequest.getType());
+        requestMap.put("otp", verifyOTPRequest.getOtp());
+
+        return requestMap;
+    }
+
+    public static GenieResponse searchLocation(AppContext appContext, LocationSearchCriteria locationSearchCriteria) {
+        SearchLocationAPI searchLocationAPI = new SearchLocationAPI(appContext, getSearchLocationParameters(locationSearchCriteria));
+        return searchLocationAPI.post();
+    }
+
+    private static Map<String, Object> getSearchLocationParameters(LocationSearchCriteria locationSearchCriteria) {
+        Map<String, Object> filterMap = new HashMap<>();
+        if (!StringUtil.isNullOrEmpty(locationSearchCriteria.getType())) {
+            filterMap.put("type", locationSearchCriteria.getType());
+        }
+
+        if (!StringUtil.isNullOrEmpty(locationSearchCriteria.getParentId())) {
+            filterMap.put("parentId", locationSearchCriteria.getParentId());
+        }
+
+        if (!StringUtil.isNullOrEmpty(locationSearchCriteria.getCode())) {
+            filterMap.put("code", locationSearchCriteria.getCode());
+        }
+
+        Map<String, Object> requestMap = new HashMap<>();
+//        requestMap.put("query", locationSearchCriteria.getQuery());
+//        requestMap.put("offset", locationSearchCriteria.getOffset());
+//        requestMap.put("limit", locationSearchCriteria.getLimit());
+        requestMap.put("filters", filterMap);
+
+        return requestMap;
+    }
 }

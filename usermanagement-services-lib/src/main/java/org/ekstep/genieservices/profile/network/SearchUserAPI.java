@@ -15,7 +15,7 @@ import java.util.Map;
  */
 
 public class SearchUserAPI extends SunbirdBaseAPI {
-    private static final String TAG = ProfileVisibilityAPI.class.getSimpleName();
+    private static final String TAG = SearchUserAPI.class.getSimpleName();
 
     private static final String ENDPOINT = "search";
 

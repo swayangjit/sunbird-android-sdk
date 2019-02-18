@@ -17,7 +17,6 @@ public class Batch {
     private Object courseAdditionalInfo;
     private String endDate;
     private String description;
-    private Object participant;
     private String updatedDate;
     private String createdDate;
     private List<String> mentors;
@@ -54,10 +53,6 @@ public class Batch {
 
     public String getDescription() {
         return description;
-    }
-
-    public Object getParticipant() {
-        return participant;
     }
 
     public String getUpdatedDate() {

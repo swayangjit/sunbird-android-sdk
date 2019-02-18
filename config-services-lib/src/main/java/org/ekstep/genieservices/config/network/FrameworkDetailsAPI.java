@@ -18,11 +18,13 @@ public class FrameworkDetailsAPI extends BaseAPI {
 
     private static final String ENDPOINT = "read";
 
-    public FrameworkDetailsAPI(AppContext appContext, String frameworkId) {
+    public FrameworkDetailsAPI(AppContext appContext, String frameworkId, String categories) {
         super(appContext,
-                String.format(Locale.US, "%s/%s/%s",
+                String.format(Locale.US, "%s/%s/%s?categories=%s",
                         appContext.getParams().getString(IParams.Key.FRAMEWORK_SERVICE_BASE_URL),
-                        ENDPOINT, frameworkId + "?categories=board,gradeLevel,subject,medium"),
+                        ENDPOINT,
+                        frameworkId,
+                        categories),
                 TAG);
     }
 

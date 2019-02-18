@@ -10,40 +10,39 @@ import org.ekstep.genieservices.commons.utils.StringUtil;
 public class FrameworkDetailsRequest {
 
     private String frameworkId;
+    private String[] categories;
     private boolean refreshFrameworkDetails;
-    private boolean defaultFrameworkDetails;
-    private String defaultFrameworkPath;
+    private String filePath;
 
-    private FrameworkDetailsRequest(String frameworkId, boolean refreshFrameworkDetails,
-                                    boolean defaultFrameworkDetails, String defaultFrameworkPath) {
+    private FrameworkDetailsRequest(String frameworkId, String[] categories, boolean refreshFrameworkDetails, String filePath) {
         this.frameworkId = frameworkId;
+        this.categories = categories;
         this.refreshFrameworkDetails = refreshFrameworkDetails;
-        this.defaultFrameworkDetails = defaultFrameworkDetails;
-        this.defaultFrameworkPath = defaultFrameworkPath;
+        this.filePath = filePath;
     }
 
     public String getFrameworkId() {
         return frameworkId;
     }
 
+    public String[] getCategories() {
+        return categories;
+    }
+
     public boolean isRefreshFrameworkDetails() {
         return refreshFrameworkDetails;
     }
 
-    public boolean isDefaultFrameworkDetails() {
-        return defaultFrameworkDetails;
-    }
-
-    public String getDefaultFrameworkPath() {
-        return defaultFrameworkPath;
+    public String getFilePath() {
+        return filePath;
     }
 
     public static class Builder {
 
         private String frameworkId;
+        private String[] categories;
         private boolean refreshFrameworkDetails;
-        private boolean defaultFrameworkDetails;
-        private String defaultFrameworkPath;
+        private String filePath;
 
         public Builder forFramework(String frameworkId) {
             if (StringUtil.isNullOrEmpty(frameworkId)) {
@@ -53,8 +52,11 @@ public class FrameworkDetailsRequest {
             return this;
         }
 
-        public Builder defaultFrameworkDetails() {
-            this.defaultFrameworkDetails = true;
+        /**
+         * Array of category. i.e. "board", "gradeLevel", "subject", "medium", "topic", "purpose"
+         */
+        public Builder frameworkCategories(String[] categories) {
+            this.categories = categories;
             return this;
         }
 
@@ -66,28 +68,25 @@ public class FrameworkDetailsRequest {
             return this;
         }
 
-        public Builder defaultFrameworkPath(String defaultFrameworkPath) {
-            if (StringUtil.isNullOrEmpty(defaultFrameworkPath)) {
-                throw new IllegalArgumentException("defaultFrameworkPath should not be null or empty.");
+        public Builder fromFilePath(String filePath) {
+            if (StringUtil.isNullOrEmpty(filePath)) {
+                throw new IllegalArgumentException("filePath should not be null or empty.");
             }
 
-            this.defaultFrameworkPath = defaultFrameworkPath;
+            this.filePath = filePath;
             return this;
         }
 
         public FrameworkDetailsRequest build() {
-            if (!defaultFrameworkDetails) {
-                if (StringUtil.isNullOrEmpty(frameworkId)) {
-                    throw new IllegalStateException("frameworkId required.");
-                }
+            if (StringUtil.isNullOrEmpty(frameworkId)) {
+                throw new IllegalStateException("frameworkId required.");
             }
 
-            if (StringUtil.isNullOrEmpty(defaultFrameworkPath)) {
-                throw new IllegalStateException("defaultFrameworkPath required.");
+            if (categories == null || categories.length == 0) {
+                this.categories = new String[]{"board", "medium", "gradeLevel", "subject"};
             }
 
-            return new FrameworkDetailsRequest(frameworkId, refreshFrameworkDetails,
-                    defaultFrameworkDetails, defaultFrameworkPath);
+            return new FrameworkDetailsRequest(frameworkId, categories, refreshFrameworkDetails, filePath);
         }
     }
 }

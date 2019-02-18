@@ -3,20 +3,27 @@ package org.ekstep.genieservices.async;
 import org.ekstep.genieservices.GenieService;
 import org.ekstep.genieservices.IUserProfileService;
 import org.ekstep.genieservices.commons.IResponseHandler;
+import org.ekstep.genieservices.commons.bean.AcceptTermsAndConditionsRequest;
 import org.ekstep.genieservices.commons.bean.EndorseOrAddSkillRequest;
 import org.ekstep.genieservices.commons.bean.FileUploadResult;
+import org.ekstep.genieservices.commons.bean.GenerateOTPRequest;
 import org.ekstep.genieservices.commons.bean.GenieResponse;
+import org.ekstep.genieservices.commons.bean.LocationSearchCriteria;
+import org.ekstep.genieservices.commons.bean.LocationSearchResult;
 import org.ekstep.genieservices.commons.bean.ProfileVisibilityRequest;
 import org.ekstep.genieservices.commons.bean.TenantInfo;
 import org.ekstep.genieservices.commons.bean.TenantInfoRequest;
 import org.ekstep.genieservices.commons.bean.UpdateUserInfoRequest;
 import org.ekstep.genieservices.commons.bean.UploadFileRequest;
+import org.ekstep.genieservices.commons.bean.UserExistRequest;
+import org.ekstep.genieservices.commons.bean.UserExistResponse;
 import org.ekstep.genieservices.commons.bean.UserProfile;
 import org.ekstep.genieservices.commons.bean.UserProfileDetailsRequest;
 import org.ekstep.genieservices.commons.bean.UserProfileSkill;
 import org.ekstep.genieservices.commons.bean.UserProfileSkillsRequest;
 import org.ekstep.genieservices.commons.bean.UserSearchCriteria;
 import org.ekstep.genieservices.commons.bean.UserSearchResult;
+import org.ekstep.genieservices.commons.bean.VerifyOTPRequest;
 
 /**
  * This class provides APIs for performing {@link UserProfileService} related operations on a separate thread.
@@ -77,7 +84,7 @@ public class UserProfileService {
     /*
      * This api is used search user
      *
-             * @param userSearchCriteria - {@link UserSearchCriteria}
+     * @param userSearchCriteria - {@link UserSearchCriteria}
      * @param responseHandler   - {@link IResponseHandler<TenantInfo>}
      */
     public void searchUser(final UserSearchCriteria userSearchCriteria, IResponseHandler<UserSearchResult> responseHandler) {
@@ -148,4 +155,80 @@ public class UserProfileService {
             }
         }, responseHandler);
     }
+
+    /**
+     * This api is used to update user info
+     *
+     * @param acceptTermsAndConditionsRequest {@link AcceptTermsAndConditionsRequest}
+     * @param responseHandler
+     */
+    public void acceptTermsAndConditions(final AcceptTermsAndConditionsRequest acceptTermsAndConditionsRequest, IResponseHandler<Void> responseHandler) {
+        ThreadPool.getInstance().execute(new IPerformable<Void>() {
+            @Override
+            public GenieResponse<Void> perform() {
+                return userProfileService.acceptTermsAndConditions(acceptTermsAndConditionsRequest);
+            }
+        }, responseHandler);
+    }
+
+    /**
+     * This api is used to check if email/phone number is already in use.
+     *
+     * @param userExistRequest {@link UserExistRequest}
+     * @param responseHandler  {@link IResponseHandler<UserExistResponse>}
+     */
+    public void isAlreadyInUse(final UserExistRequest userExistRequest, IResponseHandler<UserExistResponse> responseHandler) {
+        ThreadPool.getInstance().execute(new IPerformable<UserExistResponse>() {
+            @Override
+            public GenieResponse<UserExistResponse> perform() {
+                return userProfileService.isAlreadyInUse(userExistRequest);
+            }
+        }, responseHandler);
+    }
+
+    /**
+     * This api is used to generate the OTP
+     *
+     * @param generateOTPRequest {@link GenerateOTPRequest}
+     * @param responseHandler
+     */
+    public void generateOTP(final GenerateOTPRequest generateOTPRequest, IResponseHandler<Void> responseHandler) {
+        ThreadPool.getInstance().execute(new IPerformable<Void>() {
+            @Override
+            public GenieResponse<Void> perform() {
+                return userProfileService.generateOTP(generateOTPRequest);
+            }
+        }, responseHandler);
+    }
+
+    /**
+     * This api is used to verify OTP
+     *
+     * @param verifyOTPRequest {@link VerifyOTPRequest}
+     * @param responseHandler
+     */
+    public void verifyOTP(final VerifyOTPRequest verifyOTPRequest, IResponseHandler<Void> responseHandler) {
+        ThreadPool.getInstance().execute(new IPerformable<Void>() {
+            @Override
+            public GenieResponse<Void> perform() {
+                return userProfileService.verifyOTP(verifyOTPRequest);
+            }
+        }, responseHandler);
+    }
+
+    /**
+     * This api is used to search locations
+     *
+     * @param locationSearchCriteria {@link LocationSearchCriteria}
+     * @param responseHandler
+     */
+    public void searchLocation(final LocationSearchCriteria locationSearchCriteria, IResponseHandler<LocationSearchResult> responseHandler) {
+        ThreadPool.getInstance().execute(new IPerformable<LocationSearchResult>() {
+            @Override
+            public GenieResponse<LocationSearchResult> perform() {
+                return userProfileService.searchLocation(locationSearchCriteria);
+            }
+        }, responseHandler);
+    }
+
 }

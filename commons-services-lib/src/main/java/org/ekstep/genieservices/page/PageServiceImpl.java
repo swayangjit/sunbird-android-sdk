@@ -30,7 +30,7 @@ public class PageServiceImpl extends BaseService implements IPageService {
 
     private static final String KEY_PAGE_ASSEMBLE = "pageAssemble-";
 
-    private static final Double DEFAULT_TTL = 3d;   // In hours
+    private static final Double DEFAULT_TTL = 30d;   // In minutes
 
 
     public PageServiceImpl(AppContext appContext) {
@@ -55,18 +55,20 @@ public class PageServiceImpl extends BaseService implements IPageService {
         //check if is their any data stored in DB, for the key we have generated
         NoSqlModel pageData = NoSqlModel.findByKey(mAppContext.getDBSession(), key);
 
-        if (pageData == null) {
+        if (pageData == null || pageAssembleCriteria.getName().contains("DIAL Code Consumption")) {
             GenieResponse pageAssembleResponse = invokeAPI(pageAssembleCriteria);
             if (pageAssembleResponse.getStatus()) {
                 String jsonResponse = pageAssembleResponse.getResult().toString();
                 pageData = NoSqlModel.build(mAppContext.getDBSession(), key, jsonResponse);
                 savePageData(pageData.getValue(), pageAssembleCriteria);
             } else {
-                response = GenieResponseBuilder.getErrorResponse(pageAssembleResponse.getError(),
-                        pageAssembleResponse.getMessage(), TAG);
+                if (pageData == null) {
+                    response = GenieResponseBuilder.getErrorResponse(pageAssembleResponse.getError(),
+                            pageAssembleResponse.getMessage(), TAG);
 
-                TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, pageAssembleResponse.getMessage());
-                return response;
+                    TelemetryLogger.logFailure(mAppContext, response, TAG, methodName, params, pageAssembleResponse.getMessage());
+                    return response;
+                }
             }
         } else if (hasExpired(expirationTime)) {
             refreshPageData(pageAssembleCriteria);
@@ -100,7 +102,11 @@ public class PageServiceImpl extends BaseService implements IPageService {
     }
 
     private String getKeyForDB(PageAssembleCriteria pageAssembleCriteria) {
-        return KEY_PAGE_ASSEMBLE + pageAssembleCriteria.getName() + pageAssembleCriteria.getMode() + pageAssembleCriteria.getFilters().toString();
+        return KEY_PAGE_ASSEMBLE
+                + mAppContext.getParams().getString(IParams.Key.PAGE_SERVICE_BASE_URL)
+                + pageAssembleCriteria.getName()
+                + pageAssembleCriteria.getMode()
+                + pageAssembleCriteria.getFilters().toString();
     }
 
     private boolean hasExpired(long expirationTime) {
@@ -143,14 +149,13 @@ public class PageServiceImpl extends BaseService implements IPageService {
         } else {
             pageData.update();
         }
-        pageData.save();
     }
 
     private void saveDataExpirationTime(Double ttl, String key) {
         if (ttl == null || ttl == 0) {
             ttl = DEFAULT_TTL;
         }
-        long ttlInMilliSeconds = (long) (ttl * DateUtil.MILLISECONDS_IN_AN_HOUR);
+        long ttlInMilliSeconds = (long) (ttl * DateUtil.MILLISECONDS_IN_A_MINUTE);
         Long currentTime = DateUtil.getEpochTime();
         long expiration_time = ttlInMilliSeconds + currentTime;
 

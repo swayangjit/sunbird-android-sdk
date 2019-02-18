@@ -22,7 +22,7 @@ public class EnrolledCoursesAPI extends SunbirdBaseAPI {
 
     public EnrolledCoursesAPI(AppContext appContext, Map<String, String> customHeaders, String userId) {
         super(appContext,
-                String.format(Locale.US, "%s/%s/%s",
+                String.format(Locale.US, "%s/%s/%s?batchDetails=name,endDate,startDate,status",
                         appContext.getParams().getString(IParams.Key.COURSE_SERVICE_BASE_URL),
                         SERVICE_ENDPOINTS,
                         userId),

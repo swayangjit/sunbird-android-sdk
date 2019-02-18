@@ -1,19 +1,26 @@
 package org.ekstep.genieservices;
 
+import org.ekstep.genieservices.commons.bean.AcceptTermsAndConditionsRequest;
 import org.ekstep.genieservices.commons.bean.EndorseOrAddSkillRequest;
 import org.ekstep.genieservices.commons.bean.FileUploadResult;
+import org.ekstep.genieservices.commons.bean.GenerateOTPRequest;
 import org.ekstep.genieservices.commons.bean.GenieResponse;
+import org.ekstep.genieservices.commons.bean.LocationSearchCriteria;
+import org.ekstep.genieservices.commons.bean.LocationSearchResult;
 import org.ekstep.genieservices.commons.bean.ProfileVisibilityRequest;
 import org.ekstep.genieservices.commons.bean.TenantInfo;
 import org.ekstep.genieservices.commons.bean.TenantInfoRequest;
 import org.ekstep.genieservices.commons.bean.UpdateUserInfoRequest;
 import org.ekstep.genieservices.commons.bean.UploadFileRequest;
+import org.ekstep.genieservices.commons.bean.UserExistRequest;
+import org.ekstep.genieservices.commons.bean.UserExistResponse;
 import org.ekstep.genieservices.commons.bean.UserProfile;
 import org.ekstep.genieservices.commons.bean.UserProfileDetailsRequest;
 import org.ekstep.genieservices.commons.bean.UserProfileSkill;
 import org.ekstep.genieservices.commons.bean.UserProfileSkillsRequest;
 import org.ekstep.genieservices.commons.bean.UserSearchCriteria;
 import org.ekstep.genieservices.commons.bean.UserSearchResult;
+import org.ekstep.genieservices.commons.bean.VerifyOTPRequest;
 
 /**
  * This is the interface with all the required APIs to perform necessary operations related to Users profile.
@@ -35,5 +42,15 @@ public interface IUserProfileService {
     GenieResponse<FileUploadResult> uploadFile(UploadFileRequest uploadFileRequest);
 
     GenieResponse<Void> updateUserInfo(UpdateUserInfoRequest updateUserInfoRequest);
+
+    GenieResponse<Void> acceptTermsAndConditions(AcceptTermsAndConditionsRequest acceptTermsAndConditionsRequest);
+
+    GenieResponse<UserExistResponse> isAlreadyInUse(UserExistRequest userExistRequest);
+
+    GenieResponse<Void> generateOTP(GenerateOTPRequest generateOTPRequest);
+
+    GenieResponse<Void> verifyOTP(VerifyOTPRequest verifyOTPRequest);
+
+    GenieResponse<LocationSearchResult> searchLocation(LocationSearchCriteria locationSearchCriteria);
 
 }

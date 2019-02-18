@@ -14,6 +14,7 @@ import java.util.TimeZone;
 public class DateUtil {
 
     public static final int MILLISECONDS_IN_AN_HOUR = 3600000;
+    public static final int MILLISECONDS_IN_A_MINUTE = 60000;
     public static final String DATE_TIME_AM_PM_FORMAT = "dd/MM/yyyy, hh:mma";
     public static final String TIME_ZONE_GMT = "GMT";
     public static final String DATE_FORMAT_EXPORT_CONTENT = "yyyy-MM-dd'T'HH:mm:ss'Z'";

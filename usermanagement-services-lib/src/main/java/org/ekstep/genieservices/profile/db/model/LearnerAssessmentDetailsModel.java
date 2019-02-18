@@ -3,7 +3,9 @@ package org.ekstep.genieservices.profile.db.model;
 import org.ekstep.genieservices.commons.AppContext;
 import org.ekstep.genieservices.commons.bean.LearnerAssessmentDetails;
 import org.ekstep.genieservices.commons.db.contract.LearnerAssessmentsEntry;
+import org.ekstep.genieservices.commons.db.contract.LearnerSummaryEntry;
 import org.ekstep.genieservices.commons.db.core.ContentValues;
+import org.ekstep.genieservices.commons.db.core.ICleanable;
 import org.ekstep.genieservices.commons.db.core.IReadable;
 import org.ekstep.genieservices.commons.db.core.IResultSet;
 import org.ekstep.genieservices.commons.db.core.IUpdatable;
@@ -11,6 +13,7 @@ import org.ekstep.genieservices.commons.db.core.IWritable;
 import org.ekstep.genieservices.commons.db.operations.IDBSession;
 import org.ekstep.genieservices.commons.utils.StringUtil;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +25,7 @@ import java.util.Map;
  * shriharsh
  */
 
-public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpdatable {
+public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpdatable, ICleanable {
 
     //Need to passed when finding for the model
     public static final int FOR_SUMMARIZER = 1;
@@ -48,13 +51,20 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
     private List<LearnerAssessmentDetails> mAssessmentList;
     private String filter;
     private List<Map<String, Object>> reportsMapList;
-    private Map<Double, Integer> accuracyMap;
+    private Map<String, Integer> accuracyMap;
     private int forReports = 1;
 
 
     private LearnerAssessmentDetailsModel(IDBSession dbSession, String filter) {
         this.dbSession = dbSession;
         this.filter = filter;
+    }
+
+    private LearnerAssessmentDetailsModel(IDBSession dbSession, String filter, String uid, String contentId) {
+        this.dbSession = dbSession;
+        this.filter = filter;
+        this.uid = uid;
+        this.contentId = contentId;
     }
 
     private LearnerAssessmentDetailsModel(IDBSession dbSession, LearnerAssessmentDetails learnerAssessmentDetails) {
@@ -101,6 +111,28 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
         }
     }
 
+    public static LearnerAssessmentDetailsModel find(IDBSession dbSession, String filter, String uid, String contentId) {
+        LearnerAssessmentDetailsModel learnerAssessmentDetailsModel = new LearnerAssessmentDetailsModel(dbSession, filter, uid, contentId);
+        dbSession.read(learnerAssessmentDetailsModel);
+
+        if (learnerAssessmentDetailsModel.mAssessmentList == null) {
+            return null;
+        } else {
+            return learnerAssessmentDetailsModel;
+        }
+    }
+
+    public static LearnerAssessmentDetailsModel findDetailReport(IDBSession dbSession, List<String> quotedUIds, String contentId, int forDetailReport) {
+        LearnerAssessmentDetailsModel learnerAssessmentDetailsModel = new LearnerAssessmentDetailsModel(dbSession, forDetailReport);
+        dbSession.read(learnerAssessmentDetailsModel, getDetailReportsQuery(quotedUIds, contentId));
+
+        if (learnerAssessmentDetailsModel.mAssessmentList == null) {
+            return null;
+        } else {
+            return learnerAssessmentDetailsModel;
+        }
+    }
+
     public static LearnerAssessmentDetailsModel findForQuestionAccuracy(IDBSession dbSession, String contentId, List<String> uids, int forReports) {
         LearnerAssessmentDetailsModel learnerAssessmentDetailsModel = new LearnerAssessmentDetailsModel(dbSession, forReports);
         dbSession.read(learnerAssessmentDetailsModel, getAccuracyReportsQuery(uids, contentId));
@@ -119,19 +151,40 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
         return learnerAssessmentDetailsModel;
     }
 
+    private static String getDetailReportsQuery(List<String> quotedUIds, String contentId) {
+
+        String query = String.format(Locale.US, "SELECT *, lcs.%s " +
+                        " FROM  %s la " +
+                        "LEFT JOIN %s lcs ON (la.%s = lcs.%s AND la.%s = lcs.%s) " +
+                        "where la.%s IN(%s) AND la.%s = '%s';",
+                LearnerSummaryEntry.COLUMN_NAME_TOTAL_TS,
+                LearnerAssessmentsEntry.TABLE_NAME,
+                LearnerSummaryEntry.TABLE_NAME,
+                LearnerSummaryEntry.COLUMN_NAME_UID,
+                LearnerAssessmentsEntry.COLUMN_NAME_UID,
+                LearnerSummaryEntry.COLUMN_NAME_CONTENT_ID,
+                LearnerAssessmentsEntry.COLUMN_NAME_CONTENT_ID,
+                LearnerAssessmentsEntry.COLUMN_NAME_UID,
+                StringUtil.join(",", quotedUIds),
+                LearnerAssessmentsEntry.COLUMN_NAME_CONTENT_ID,
+                contentId);
+
+        return query;
+    }
+
     private static String getAccuracyReportsQuery(List<String> uids, String contentId) {
 
         String query = String.format(Locale.US, "SELECT %s, count(*) as users_count " +
                         "FROM  %s " +
                         "WHERE %s IN(%s) AND %s = '%s' AND %s > 0 " +
                         "group by %s;",
-                LearnerAssessmentsEntry.COLUMN_NAME_Q_INDEX,
+                LearnerAssessmentsEntry.COLUMN_NAME_QID,
                 LearnerAssessmentsEntry.TABLE_NAME,
                 LearnerAssessmentsEntry.COLUMN_NAME_UID,
                 StringUtil.join(",", uids),
                 LearnerAssessmentsEntry.COLUMN_NAME_CONTENT_ID,
                 contentId,
-                LearnerAssessmentsEntry.COLUMN_NAME_CORRECT,
+                LearnerAssessmentsEntry.COLUMN_NAME_SCORE,
                 LearnerAssessmentsEntry.COLUMN_NAME_QID);
 
         return query;
@@ -144,7 +197,7 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
                         "WHERE %s IN(%s) AND %s = '%s' AND %s = '%s';",
                 LearnerAssessmentsEntry.COLUMN_NAME_UID,
                 LearnerAssessmentsEntry.COLUMN_NAME_TIME_SPENT,
-                LearnerAssessmentsEntry.COLUMN_NAME_CORRECT,
+                LearnerAssessmentsEntry.COLUMN_NAME_SCORE,
                 LearnerAssessmentsEntry.COLUMN_NAME_MAX_SCORE,
                 LearnerAssessmentsEntry.TABLE_NAME,
                 LearnerAssessmentsEntry.COLUMN_NAME_UID,
@@ -204,10 +257,10 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
     }
 
     private void readAccuracyReportCursorData(IResultSet cursor) {
-        double qIndex = cursor.getDouble(0);
+        String qId = cursor.getString(0);
         int correct_count = cursor.getInt(1);
 
-        accuracyMap.put(qIndex, correct_count);
+        accuracyMap.put(qId, correct_count);
     }
 
     private Map<String, Object> readQuestionDetailReportsCursorData(IResultSet cursor) {
@@ -219,8 +272,9 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
         int time = cursor.getInt(1);
         reportSummary.put("time", time);
 
-        int result = cursor.getInt(2);
-        reportSummary.put("result", result);
+        double result = cursor.getDouble(2);
+        DecimalFormat df = new DecimalFormat(".##");
+        reportSummary.put("result", Double.valueOf(df.format(result)));
 
         int maxScore = cursor.getInt(3);
         reportSummary.put("maxScore", maxScore);
@@ -317,7 +371,8 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
         }
 
         if (cursor.getColumnIndex(LearnerAssessmentsEntry.COLUMN_NAME_SCORE) != -1) {
-            learnerAssessmentDetails.setScore(cursor.getDouble(cursor.getColumnIndex(LearnerAssessmentsEntry.COLUMN_NAME_SCORE)));
+            DecimalFormat df = new DecimalFormat(".##");
+            learnerAssessmentDetails.setScore(Double.valueOf(df.format(cursor.getDouble(cursor.getColumnIndex(LearnerAssessmentsEntry.COLUMN_NAME_SCORE)))));
         }
 
         if (cursor.getColumnIndex(LearnerAssessmentsEntry.COLUMN_NAME_TIME_SPENT) != -1) {
@@ -345,7 +400,12 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
         }
 
         if (cursor.getColumnIndex(LearnerAssessmentsEntry.COLUMN_NAME_MAX_SCORE) != -1) {
-            learnerAssessmentDetails.setMaxScore(cursor.getDouble(cursor.getColumnIndex(LearnerAssessmentsEntry.COLUMN_NAME_MAX_SCORE)));
+            DecimalFormat df = new DecimalFormat(".##");
+            learnerAssessmentDetails.setMaxScore(Double.valueOf(df.format(cursor.getDouble(cursor.getColumnIndex(LearnerAssessmentsEntry.COLUMN_NAME_MAX_SCORE)))));
+        }
+
+        if (cursor.getColumnIndex(LearnerSummaryEntry.COLUMN_NAME_TOTAL_TS) != -1) {
+            learnerAssessmentDetails.setTotal_ts(cursor.getDouble(cursor.getColumnIndex(LearnerSummaryEntry.COLUMN_NAME_TOTAL_TS)));
         }
 
         return learnerAssessmentDetails;
@@ -395,6 +455,24 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
     @Override
     public String getTableName() {
         return LearnerAssessmentsEntry.TABLE_NAME;
+    }
+
+    public Void delete() {
+        dbSession.clean(this);
+        return null;
+    }
+
+    @Override
+    public void clean() {
+        this.id = -1L;
+        this.uid = null;
+        this.contentId = null;
+    }
+
+    @Override
+    public String selectionToClean() {
+        return String.format(Locale.US, " where %s = '%s' AND %s = '%s'",
+                LearnerAssessmentsEntry.COLUMN_NAME_UID, this.uid, LearnerAssessmentsEntry.COLUMN_NAME_CONTENT_ID, this.contentId);
     }
 
     @Override
@@ -451,11 +529,10 @@ public class LearnerAssessmentDetailsModel implements IReadable, IWritable, IUpd
         return reportsMapList;
     }
 
-    public Map<Double, Integer> getAccuracyReportMap() {
+    public Map<String, Integer> getAccuracyReportMap() {
         if (accuracyMap == null) {
             accuracyMap = new HashMap<>();
         }
         return accuracyMap;
     }
-
 }
